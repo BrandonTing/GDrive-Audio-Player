@@ -1,21 +1,22 @@
 import './App.css';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import Login from './components/Login';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
 
 const App = () => {
-  const clientId = process.env.PUBLIC_GOOGLE_CLIENT_ID;
-
-  if (!clientId) {
-    return <div>Error: Missing Google Client ID</div>;
-  }
+  // NOTE: This will be replaced with actual auth state
+  const isAuthenticated = false;
 
   return (
-    <GoogleOAuthProvider clientId={clientId}>
-      <div className="content">
-        <h1>GDrive Audio Player</h1>
-        <Login />
-      </div>
-    </GoogleOAuthProvider>
+    <div className="content">
+      <Routes>
+        <Route
+          path="/"
+          element={isAuthenticated ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </div>
   );
 };
 
