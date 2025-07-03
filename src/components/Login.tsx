@@ -1,20 +1,26 @@
-import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
+import { notifyAuthStoreChange } from '../hooks/useAuthStore';
 
-const Login = () => {
-  const handleLoginSuccess = (credentialResponse: any) => {
-    console.log(credentialResponse);
-    // We will handle the access token here in the next step
-  };
+interface LoginProps {
+  onLoginSuccess: (accessToken: string) => void;
+}
 
-  const handleLoginError = () => {
-    console.log('Login Failed');
-  };
+const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      console.log('Login Success:', tokenResponse);
+      localStorage.setItem('google_access_token', tokenResponse.access_token);
+      notifyAuthStoreChange(); // Notify the store of the change
+      onLoginSuccess(tokenResponse.access_token);
+    },
+    onError: () => {
+      console.log('Login Failed');
+    },
+    scope: 'https://www.googleapis.com/auth/drive.readonly',
+  });
 
   return (
-    <GoogleLogin
-      onSuccess={handleLoginSuccess}
-      onError={handleLoginError}
-    />
+    <button onClick={() => login()}>Sign in with Google</button>
   );
 };
 
