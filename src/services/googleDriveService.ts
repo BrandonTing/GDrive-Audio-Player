@@ -11,7 +11,7 @@ export const fetchRootFolderContents = async (): Promise<GoogleDriveFile[]> => {
     const response = await axiosInstance.get('/files', {
       params: {
         q: "'root' in parents and trashed = false and mimeType contains 'audio/'",
-        fields: 'files(id, name, mimeType)', // No webContentLink here
+        fields: 'files(id, name, mimeType)',
       },
     });
     return response.data.files;
@@ -23,14 +23,15 @@ export const fetchRootFolderContents = async (): Promise<GoogleDriveFile[]> => {
 
 export const getAudioFileBlobUrl = async (fileId: string): Promise<string> => {
   try {
-    const response = await gapi.client.drive.files.get({
-      fileId: fileId,
-      alt: 'media',
+    const response = await axiosInstance.get(`/files/${fileId}`, {
+      params: {
+        alt: 'media',
+      },
+      responseType: 'arraybuffer', // Crucial for binary data
     });
-    console.log(response);
-    // gapi.client.drive.files.get with alt='media' returns the file content directly
-    // The response.body will be the raw audio data
-    const blob = new Blob([response.body], { type: response.headers['Content-Type'] });
+
+    const contentType = response.headers['content-type'];
+    const blob = new Blob([response.data], { type: contentType });
     return URL.createObjectURL(blob);
   } catch (error) {
     console.error('Error fetching audio file as blob:', error);
