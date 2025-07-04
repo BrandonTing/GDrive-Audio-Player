@@ -1,4 +1,5 @@
 import type React from 'react';
+import { Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthContext';
 import { PlaylistProvider } from '../context/PlaylistContext'; // Import PlaylistProvider
@@ -9,6 +10,7 @@ const RootLayout: React.FC = () => {
   return (
     <AuthProvider>
       <PlaylistProvider> {/* Wrap Outlet with PlaylistProvider */}
+        <Toaster />
         <Outlet />
       </PlaylistProvider>
     </AuthProvider>

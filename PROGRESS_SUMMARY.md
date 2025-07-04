@@ -1,54 +1,22 @@
 # Current Project Progress Summary
 
-This document summarizes the current state of the GDrive Audio Player project as of the last interaction.
+This document summarizes the current state of the GDrive Audio Player project.
 
-## Phase 1: Core Functionality & Setup (In Progress)
+## Phase 1: Core Functionality & Setup (Completed)
 
-### Dependencies Installed:
-- `@react-oauth/google`
-- `gapi-script`
-- `axios`
-- `react-router-dom`
-- `xstate`
-- `@xstate/react`
+- **Dependencies:** All core dependencies installed (`@react-oauth/google`, `gapi-script`, `axios`, `react-router-dom`, `xstate`, `@xstate/react`).
+- **Authentication:** Google OAuth is fully integrated, with robust state management and context API usage.
+- **Routing:** A protected routing system is in place using `react-router-dom` loaders.
+- **API Integration:** `axiosInstance` and `googleDriveService` are set up to fetch audio files from Google Drive.
+- **Basic Audio Player:** A functional `AudioPlayer` component was created using XState v5.
 
-### Authentication Setup:
-- Google OAuth provider integrated into the application.
-- `Login` component created with Google Sign-In button.
-- Google Client ID is now managed via a `.env` file (prefixed with `PUBLIC_`).
-- `.env` file added to `.gitignore` for security.
-- Authentication state managed using `useSyncExternalStore` for robust synchronization with `localStorage`.
-- `AuthContext` created in `src/context/` to provide `onLoginSuccess` callback via context, removing prop drilling.
-- `AuthContext` optimized using `useMemo` for the context value, with `onLoginSuccess` defined directly inside.
+## Phase 2: Playlist Implementation (Completed)
 
-### Routing Implemented:
-- `react-router-dom` installed and configured.
-- `createBrowserRouter` used for router configuration in `src/index.tsx`.
-- `RouterProvider` used to render the application.
-- Basic routes defined:
-    - `/` (protected route, renders `HomePage`)
-    - `/login` (public route, renders `LoginPage`)
-- `LoginPage.tsx` and `HomePage.tsx` components created in `src/pages/`.
-- `GoogleOAuthProvider` moved to `LoginPage.tsx`.
-- `protectedLoader` implemented in `src/loaders/` to enforce authentication for protected routes.
-- `loginRedirectLoader` implemented in `src/loaders/` to redirect authenticated users from the login page.
-- `RootLayout` created in `src/layouts/` to wrap the `AuthProvider` and provide a global layout.
-
-### API Integration Setup:
-- `axiosInstance` created in `src/api/` with a request interceptor to automatically attach the Google access token to all outgoing requests.
-- `googleDriveService.ts` created in `src/services/` to fetch root folder contents, including `webContentLink` and filtering for audio files.
-
-### Audio Player Implementation:
-- `AudioPlayer.tsx` component created in `src/components/` using XState v5 for robust state management.
-- `HomePage.tsx` updated to display audio files and integrate the `AudioPlayer` component, allowing playback of selected files.
-
-### Documentation/Guides Created:
-- `plan.md`: High-level development plan.
-- `GOOGLE_CLIENT_ID_GUIDE.md`: Step-by-step guide to obtain Google Client ID.
-- `ROUTING_PLAN.md`: Detailed plan for routing implementation.
-- `REACT_ROUTER_LOADER_GUIDE.md`: Explanation and example of React Router's loader feature.
+- **Playlist State Management:** `playlistMachine.ts` created to manage the playlist, including track lists and playback state.
+- **Playlist UI:** `Playlist.tsx` component developed to display and interact with the playlist.
+- **Context Integration:** `PlaylistContext` implemented to provide global access to the playlist actor.
+- **Functionality:** The `AudioPlayer` is fully integrated with the playlist system. Users can select tracks from the playlist, and playback proceeds to the next track automatically.
 
 ## Next Steps:
 
-- **Verify Audio Playback:** Ensure the XState v5 refactor has resolved the issues and audio playback is working correctly.
-- **Implement Playlist Feature:** Begin Phase 2 of the development plan, focusing on building the playlist functionality.
+- **Implement Advanced Features & UI/UX Polish:** Begin Phase 3 of the development plan, focusing on enhancing the player with advanced controls and improving the user experience.

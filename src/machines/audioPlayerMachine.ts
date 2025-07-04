@@ -7,6 +7,9 @@ interface AudioPlayerContext {
   error: string | null;
   fileId: string | null; // Stores the current fileId being processed
   audioRef: HTMLAudioElement | null; // Reference to the audio DOM element
+  volume: number;
+  duration: number;
+  currentTime: number;
 }
 
 // Define the machine's events
@@ -16,7 +19,10 @@ type AudioPlayerEvent =
   | { type: 'PAUSE' }
   | { type: 'ENDED' }
   | { type: 'ERROR'; message: string }
-  | { type: 'SET_REF'; audioRef: HTMLAudioElement | null };
+  | { type: 'SET_REF'; audioRef: HTMLAudioElement | null }
+  | { type: 'SET_VOLUME'; volume: number }
+  | { type: 'UPDATE_TIME'; time: number }
+  | { type: 'SEEK'; time: number };
 
 // Define the machine's input (for invoked actors and actions)
 interface AudioPlayerMachineInput {
@@ -30,6 +36,9 @@ export const audioPlayerMachine = createMachine({
     error: null as string | null,
     fileId: null,
     audioRef: null as HTMLAudioElement | null,
+    volume: 1,
+    duration: 0,
+    currentTime: 0,
   },
   initial: 'idle',
   states: {
@@ -64,6 +73,15 @@ export const audioPlayerMachine = createMachine({
           target: 'error',
           actions: assign({ error: ({ event }) => event.message }),
         },
+        SET_VOLUME: {
+          actions: 'setVolume',
+        },
+        UPDATE_TIME: {
+          actions: 'updateTime',
+        },
+        SEEK: {
+          actions: 'seek',
+        },
       },
     },
     paused: {
@@ -95,6 +113,7 @@ export const audioPlayerMachine = createMachine({
             audio.src = context.blobUrl || '';
             audio.load(); // Load the new source
           }
+          audio.volume = context.volume;
           audio.play().catch(e => console.error("Error playing audio:", e));
         }
       },
@@ -104,6 +123,30 @@ export const audioPlayerMachine = createMachine({
           audio.pause();
         }
       },
+      setVolume: assign({
+        volume: ({ event, context }) => {
+          if (event.type === 'SET_VOLUME') {
+            if (context.audioRef) {
+              context.audioRef.volume = event.volume;
+            }
+            return event.volume;
+          }
+          return context.volume;
+        },
+      }),
+      updateTime: assign({
+        currentTime: ({ event }) => {
+          if (event.type === 'UPDATE_TIME') {
+            return event.time;
+          }
+          return 0;
+        },
+      }),
+      seek: ({ context, event }) => {
+        if (event.type === 'SEEK' && context.audioRef) {
+          context.audioRef.currentTime = event.time;
+        }
+      },
     },
   },
-);
+});

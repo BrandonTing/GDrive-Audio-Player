@@ -1,9 +1,21 @@
 import { assign, createMachine } from 'xstate';
 import { GoogleDriveFile } from '../services/googleDriveService';
 
+const shuffleArray = (array: GoogleDriveFile[]) => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
 interface PlaylistContext {
   tracks: GoogleDriveFile[];
+  shuffledTracks: GoogleDriveFile[];
   currentTrackIndex: number | null;
+  shuffle: boolean;
+  repeat: 'none' | 'one' | 'all';
 }
 
 type PlaylistEvent =
@@ -12,7 +24,9 @@ type PlaylistEvent =
   | { type: 'PLAY_TRACK'; trackId: string }
   | { type: 'PLAY_NEXT' }
   | { type: 'PLAY_PREVIOUS' }
-  | { type: 'CLEAR_PLAYLIST' };
+  | { type: 'CLEAR_PLAYLIST' }
+  | { type: 'TOGGLE_SHUFFLE' }
+  | { type: 'TOGGLE_REPEAT' };
 
 const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
   {
@@ -20,7 +34,10 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
     initial: 'active',
     context: {
       tracks: [],
+      shuffledTracks: [],
       currentTrackIndex: null,
+      shuffle: false,
+      repeat: 'none',
     },
     states: {
       active: {
@@ -29,7 +46,17 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
             actions: assign({
               tracks: ({ context, event }) => {
                 if (!context.tracks.some(t => t.id === event.track.id)) {
-                  return [...context.tracks, event.track];
+                  const newTracks = [...context.tracks, event.track];
+                  if (context.shuffle) {
+                    // If shuffle is on, add to shuffled list as well
+                    // and re-shuffle
+                    return {
+                        ...context,
+                        tracks: newTracks,
+                        shuffledTracks: shuffleArray(newTracks)
+                    };
+                  }
+                  return newTracks;
                 }
                 return context.tracks;
               },
@@ -39,10 +66,11 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
             actions: assign({
               tracks: ({ context, event }) =>
                 context.tracks.filter((track) => track.id !== event.trackId),
+              shuffledTracks: ({ context, event }) =>
+                context.shuffledTracks.filter((track) => track.id !== event.trackId),
               currentTrackIndex: ({ context, event }) => {
-                // Adjust currentTrackIndex if the removed track was the current one
                 if (context.currentTrackIndex !== null && context.tracks[context.currentTrackIndex]?.id === event.trackId) {
-                  return null; // Or logic to select next/previous
+                  return null;
                 }
                 return context.currentTrackIndex;
               },
@@ -51,7 +79,8 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
           PLAY_TRACK: {
             actions: assign({
               currentTrackIndex: ({ context, event }) => {
-                const index = context.tracks.findIndex((t) => t.id === event.trackId);
+                const currentTracks = context.shuffle ? context.shuffledTracks : context.tracks;
+                const index = currentTracks.findIndex((t) => t.id === event.trackId);
                 return index !== -1 ? index : null;
               },
             }),
@@ -59,24 +88,56 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
           PLAY_NEXT: {
             actions: assign({
               currentTrackIndex: ({ context }) => {
-                if (context.currentTrackIndex === null) return 0; // Start from beginning
-                return (context.currentTrackIndex + 1) % context.tracks.length;
+                if (context.repeat === 'one') {
+                  return context.currentTrackIndex;
+                }
+
+                const currentTracks = context.shuffle ? context.shuffledTracks : context.tracks;
+                if (context.currentTrackIndex === null) return 0;
+
+                const nextIndex = context.currentTrackIndex + 1;
+                if (nextIndex >= currentTracks.length) {
+                  return context.repeat === 'all' ? 0 : null;
+                }
+                return nextIndex;
               },
             }),
           },
           PLAY_PREVIOUS: {
             actions: assign({
               currentTrackIndex: ({ context }) => {
-                if (context.currentTrackIndex === null) return 0; // Start from beginning
+                const currentTracks = context.shuffle ? context.shuffledTracks : context.tracks;
+                if (context.currentTrackIndex === null) return 0;
                 const newIndex = context.currentTrackIndex - 1;
-                return newIndex < 0 ? context.tracks.length - 1 : newIndex;
+                return newIndex < 0 ? currentTracks.length - 1 : newIndex;
               },
             }),
           },
           CLEAR_PLAYLIST: {
             actions: assign({
               tracks: [],
+              shuffledTracks: [],
               currentTrackIndex: null,
+            }),
+          },
+          TOGGLE_SHUFFLE: {
+            actions: assign({
+              shuffle: ({ context }) => !context.shuffle,
+              shuffledTracks: ({ context }) => {
+                if (!context.shuffle) {
+                  return shuffleArray(context.tracks);
+                }
+                return []; // Or keep original order if you want to toggle back
+              },
+            }),
+          },
+          TOGGLE_REPEAT: {
+            actions: assign({
+              repeat: ({ context }) => {
+                if (context.repeat === 'none') return 'all';
+                if (context.repeat === 'all') return 'one';
+                return 'none';
+              },
             }),
           },
         },

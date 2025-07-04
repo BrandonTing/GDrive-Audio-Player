@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate, useParams } from 'react-router-dom';
+import { useLoaderData, useNavigate, useParams, useNavigation } from 'react-router-dom';
 import AudioPlayer from '../components/AudioPlayer';
 import Playlist from '../components/Playlist';
 import {
@@ -15,6 +15,7 @@ const HomePage = () => {
   const { files } = useLoaderData() as HomePageLoaderData;
   const { folderId } = useParams<{ folderId?: string }>();
   const navigate = useNavigate();
+  const navigation = useNavigation();
   const { sendToPlaylist } = usePlaylist();
 
   const folders = files.filter(
@@ -40,6 +41,10 @@ const HomePage = () => {
     sendToPlaylist({ type: 'ADD_TRACK', track: file });
     alert(`${file.name} added to playlist!`);
   };
+
+  if (navigation.state === "loading") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
