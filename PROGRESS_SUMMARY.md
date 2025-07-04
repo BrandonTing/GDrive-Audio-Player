@@ -9,6 +9,8 @@ This document summarizes the current state of the GDrive Audio Player project as
 - `gapi-script`
 - `axios`
 - `react-router-dom`
+- `xstate`
+- `@xstate/react`
 
 ### Authentication Setup:
 - Google OAuth provider integrated into the application.
@@ -29,10 +31,16 @@ This document summarizes the current state of the GDrive Audio Player project as
 - `LoginPage.tsx` and `HomePage.tsx` components created in `src/pages/`.
 - `GoogleOAuthProvider` moved to `LoginPage.tsx`.
 - `protectedLoader` implemented in `src/loaders/` to enforce authentication for protected routes.
-- `src/App.tsx` file removed as its functionality is now distributed.
+- `loginRedirectLoader` implemented in `src/loaders/` to redirect authenticated users from the login page.
+- `RootLayout` created in `src/layouts/` to wrap the `AuthProvider` and provide a global layout.
 
 ### API Integration Setup:
 - `axiosInstance` created in `src/api/` with a request interceptor to automatically attach the Google access token to all outgoing requests.
+- `googleDriveService.ts` created in `src/services/` to fetch root folder contents, including `webContentLink` and filtering for audio files.
+
+### Audio Player Implementation:
+- `AudioPlayer.tsx` component created in `src/components/` using XState v5 for robust state management.
+- `HomePage.tsx` updated to display audio files and integrate the `AudioPlayer` component, allowing playback of selected files.
 
 ### Documentation/Guides Created:
 - `plan.md`: High-level development plan.
@@ -42,4 +50,5 @@ This document summarizes the current state of the GDrive Audio Player project as
 
 ## Next Steps:
 
-- Begin implementing Google Drive API calls for file browsing.
+- **Verify Audio Playback:** Ensure the XState v5 refactor has resolved the issues and audio playback is working correctly.
+- **Implement Playlist Feature:** Begin Phase 2 of the development plan, focusing on building the playlist functionality.
