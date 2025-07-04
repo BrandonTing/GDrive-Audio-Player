@@ -4,17 +4,23 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import { protectedLoader } from './loaders/protectedLoader';
-import { AuthProvider } from './context/AuthContext';
+import RootLayout from './layouts/RootLayout'; // Import RootLayout
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
-    loader: protectedLoader,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
+    element: <RootLayout />, // Use RootLayout as the main element
+    children: [
+      {
+        index: true, // This makes '/' render HomePage
+        element: <HomePage />,
+        loader: protectedLoader,
+      },
+      {
+        path: "login", // Relative path to parent
+        element: <LoginPage />,
+      },
+    ],
   },
 ]);
 
@@ -23,9 +29,7 @@ if (rootEl) {
   const root = ReactDOM.createRoot(rootEl);
   root.render(
     <React.StrictMode>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
+      <RouterProvider router={router} />
     </React.StrictMode>,
   );
 }

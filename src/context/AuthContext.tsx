@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import type React from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
@@ -7,7 +8,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const navigate = useNavigate();
 
   // Memoize the context value object, and define onLoginSuccess directly inside
@@ -19,9 +22,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [navigate]);
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
 
