@@ -1,6 +1,7 @@
-import { useState } from 'react';
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import AudioPlayer from '../components/AudioPlayer';
+import Playlist from '../components/Playlist';
+import { usePlaylist } from '../context/PlaylistContext';
 import type { GoogleDriveFile } from '../services/googleDriveService';
 
 interface HomePageLoaderData {
@@ -11,9 +12,13 @@ const HomePage = () => {
   const { files } = useLoaderData() as HomePageLoaderData;
   const { folderId } = useParams<{ folderId?: string }>();
   const navigate = useNavigate();
-  const [currentAudioFileId, setCurrentAudioFileId] = useState<string | null>(
-    null,
-  );
+  const { playlistState, sendToPlaylist } = usePlaylist();
+
+  const currentAudioFileId =
+    playlistState.context.currentTrackIndex !== null &&
+      playlistState.context.tracks[playlistState.context.currentTrackIndex]
+      ? playlistState.context.tracks[playlistState.context.currentTrackIndex].id
+      : null;
 
   const folders = files.filter(
     (file) => file.mimeType === 'application/vnd.google-apps.folder',
@@ -21,7 +26,7 @@ const HomePage = () => {
   const audioFiles = files.filter((file) => file.mimeType.startsWith('audio/'));
 
   const handleFileClick = (file: GoogleDriveFile) => {
-    setCurrentAudioFileId(file.id);
+    sendToPlaylist({ type: 'PLAY_TRACK', trackId: file.id });
   };
 
   const handleFolderClick = (folder: GoogleDriveFile) => {
@@ -29,13 +34,14 @@ const HomePage = () => {
   };
 
   const handleBackClick = () => {
-    // Navigate up one level. This is a simplified approach.
-    // A more robust solution would involve tracking the full path.
     if (folderId) {
-      // For now, assume we go back to root if not in root
-      // A better solution would parse the current path to find the parent folder ID
       navigate('/');
     }
+  };
+
+  const handleAddToPlaylist = (file: GoogleDriveFile) => {
+    sendToPlaylist({ type: 'ADD_TRACK', track: file });
+    alert(`${file.name} added to playlist!`);
   };
 
   return (
@@ -77,6 +83,13 @@ const HomePage = () => {
               <button type="button" onClick={() => handleFileClick(file)}>
                 ▶️ Play
               </button>
+              <button
+                type="button"
+                onClick={() => handleAddToPlaylist(file)}
+                style={{ marginLeft: '10px' }}
+              >
+                ➕ Add to Playlist
+              </button>
               {file.name} ({file.mimeType})
             </li>
           ))}
@@ -84,6 +97,7 @@ const HomePage = () => {
       )}
       <hr />
       <AudioPlayer src={currentAudioFileId} />
+      <Playlist />
     </div>
   );
 };

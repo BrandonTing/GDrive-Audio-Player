@@ -85,7 +85,6 @@ const audioPlayerMachine = createMachine(
     actions: {
       playAudio: ({ context }) => {
         const audio = context.audioRef;
-        console.log('play')
         if (audio && audio.src === context.blobUrl) {
           audio.play().catch(e => console.error("Error playing audio:", e));
         } else if (audio && context.blobUrl) {
@@ -118,7 +117,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   useEffect(() => {
     // Only send LOAD if src (fileId) has changed and is not null
-    console.log(src, state.context.fileId)
     if (src && src !== state.context.fileId) {
       send({ type: 'LOAD', fileId: src });
     }
