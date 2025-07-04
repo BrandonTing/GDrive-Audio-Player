@@ -1,6 +1,9 @@
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import AudioPlayer from '../components/AudioPlayer';
 import Playlist from '../components/Playlist';
+import {
+  AudioPlayerActorProvider
+} from '../context/AudioPlayerActorContext';
 import { usePlaylist } from '../context/PlaylistContext';
 import type { GoogleDriveFile } from '../services/googleDriveService';
 
@@ -12,13 +15,7 @@ const HomePage = () => {
   const { files } = useLoaderData() as HomePageLoaderData;
   const { folderId } = useParams<{ folderId?: string }>();
   const navigate = useNavigate();
-  const { playlistState, sendToPlaylist } = usePlaylist();
-
-  const currentAudioFileId =
-    playlistState.context.currentTrackIndex !== null &&
-      playlistState.context.tracks[playlistState.context.currentTrackIndex]
-      ? playlistState.context.tracks[playlistState.context.currentTrackIndex].id
-      : null;
+  const { sendToPlaylist } = usePlaylist();
 
   const folders = files.filter(
     (file) => file.mimeType === 'application/vnd.google-apps.folder',
@@ -42,10 +39,6 @@ const HomePage = () => {
   const handleAddToPlaylist = (file: GoogleDriveFile) => {
     sendToPlaylist({ type: 'ADD_TRACK', track: file });
     alert(`${file.name} added to playlist!`);
-  };
-
-  const handleTrackEnded = () => {
-    sendToPlaylist({ type: 'PLAY_NEXT' });
   };
 
   return (
@@ -100,8 +93,10 @@ const HomePage = () => {
         </ul>
       )}
       <hr />
-      <AudioPlayer src={currentAudioFileId} onEnded={handleTrackEnded} />
-      <Playlist />
+      <AudioPlayerActorProvider>
+        <AudioPlayer />
+        <Playlist />
+      </AudioPlayerActorProvider>
     </div>
   );
 };

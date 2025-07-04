@@ -1,8 +1,10 @@
 import type React from 'react';
+import { useAudioPlayerActor } from '../context/AudioPlayerActorContext'; // Import useAudioPlayerActor
 import { usePlaylist } from '../context/PlaylistContext';
 
 const Playlist: React.FC = () => {
   const { playlistState, sendToPlaylist } = usePlaylist();
+  const [audioPlayerState, sendToAudioPlayer] = useAudioPlayerActor(); // Get actor state and send
 
   const { tracks, currentTrackIndex } = playlistState.context;
 
@@ -12,11 +14,29 @@ const Playlist: React.FC = () => {
 
   const handlePlayTrack = (trackId: string) => {
     sendToPlaylist({ type: 'PLAY_TRACK', trackId });
-    // TODO: Integrate with AudioPlayer to actually play the track
+    sendToAudioPlayer({ type: 'PLAY' });
   };
 
   const handleClearPlaylist = () => {
     sendToPlaylist({ type: 'CLEAR_PLAYLIST' });
+  };
+
+  const handlePlayPauseAudioPlayer = () => {
+    if (audioPlayerState.matches('playing')) {
+      sendToAudioPlayer({ type: 'PAUSE' });
+    } else {
+      sendToAudioPlayer({ type: 'PLAY' });
+    }
+  };
+
+  const handlePlayNext = () => {
+    sendToPlaylist({ type: 'PLAY_NEXT' });
+    sendToAudioPlayer({ type: 'PLAY' });
+  };
+
+  const handlePlayPrevious = () => {
+    sendToPlaylist({ type: 'PLAY_PREVIOUS' });
+    sendToAudioPlayer({ type: 'PLAY' });
   };
 
   return (
@@ -55,15 +75,12 @@ const Playlist: React.FC = () => {
             ))}
           </ul>
           <div>
-            <button
-              type="button"
-              onClick={() => sendToPlaylist({ type: 'PLAY_PREVIOUS' })}
-            >
+            <button type="button" onClick={handlePlayPrevious}>
               Previous
             </button>
             <button
               type="button"
-              onClick={() => sendToPlaylist({ type: 'PLAY_NEXT' })}
+              onClick={handlePlayNext}
               style={{ marginLeft: '10px' }}
             >
               Next
@@ -75,6 +92,18 @@ const Playlist: React.FC = () => {
             >
               Clear Playlist
             </button>
+            {/* Add a global Play/Pause button for the current track */}
+            {currentTrackIndex !== null && (
+              <button
+                type="button"
+                onClick={handlePlayPauseAudioPlayer}
+                style={{ marginLeft: '10px' }}
+              >
+                {audioPlayerState.matches('playing')
+                  ? 'Pause Current'
+                  : 'Play Current'}
+              </button>
+            )}
           </div>
         </>
       )}

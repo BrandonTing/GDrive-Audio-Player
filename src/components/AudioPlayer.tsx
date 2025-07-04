@@ -1,120 +1,27 @@
-import { useMachine } from '@xstate/react';
 import type React from 'react';
 import { useCallback, useEffect, useId } from 'react';
-import { assign, createMachine, fromPromise } from 'xstate';
-import { getAudioFileBlobUrl } from '../services/googleDriveService';
+import { useAudioPlayerActor } from '../context/AudioPlayerActorContext';
+import { usePlaylist } from '../context/PlaylistContext';
 
-const audioPlayerMachine = createMachine(
-  {
-    id: 'audioPlayer',
-    context: {
-      blobUrl: null,
-      error: null as string | null,
-      fileId: null,
-      audioRef: null as HTMLAudioElement | null,
-    },
-    initial: 'idle',
-    states: {
-      idle: {
-      },
-      loading: {
-        invoke: {
-          id: 'loadAudio',
-          src: fromPromise(({ input }) => getAudioFileBlobUrl(input.fileId)), // Use fromPromise, directly call async function
-          onDone: {
-            target: 'loadingBlob',
-            actions: assign({ blobUrl: ({ event }) => event.output }), // Output of promise is the blobUrl
-          },
-          onError: {
-            target: 'error',
-            actions: assign({ error: ({ event }) => (event.error as Error).message }), // Error from promise
-          },
-          input: ({ context }) => {
-            return { fileId: context.fileId };
-          },
-        },
-      },
-      loadingBlob: {
-        on: {
-          LOAD: {
-            target: 'playing',
-          }
-        }
-      },
-      playing: {
-        entry: 'playAudio',
-        on: {
-          PAUSE: 'paused',
-          ENDED: 'idle',
-          ERROR: {
-            target: 'error',
-            actions: assign({ error: ({ event }) => event.message }),
-          },
-        },
-      },
-      paused: {
-        entry: 'pauseAudio',
-        on: {
-          PLAY: 'playing',
-          LOAD: {
-            target: 'loading',
-            actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
-          },
-        },
-      },
-      error: {
-        on: {
-          LOAD: {
-            target: 'loading',
-            actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
-          },
-        },
-      },
-    },
-    on: {
-      SET_REF: {
-        actions: assign({ audioRef: ({ event }) => event.audioRef }),
-      },
-      LOAD: {
-        target: '.loading',
-        actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
-      },
-    }
-  },
-  {
-    actions: {
-      playAudio: ({ context }) => {
-        const audio = context.audioRef;
-        if (audio && audio.src === context.blobUrl) {
-          audio.play().catch(e => console.error("Error playing audio:", e));
-        } else if (audio && context.blobUrl) {
-          audio.src = context.blobUrl;
-          audio.play().catch(e => console.error("Error playing audio:", e));
-        }
-      },
-      pauseAudio: ({ context }) => {
-        const audio = context.audioRef;
-        if (audio) {
-          audio.pause();
-        }
-      },
-    },
-  },
-);
-
-interface AudioPlayerProps {
-  src: string | null; // Now represents fileId
-  onEnded?: () => void; // New prop for when audio ends
-}
-
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onEnded }) => {
+const AudioPlayer: React.FC = () => {
   const audioId = useId();
-  const [state, send] = useMachine(audioPlayerMachine);
+  const [state, send] = useAudioPlayerActor();
+  const { playlistState, sendToPlaylist } = usePlaylist();
 
-  const setupAudioRef = useCallback((node: HTMLAudioElement | null) => {
-    send({ type: 'SET_REF', audioRef: node });
-  }, [send]);
+  const src =
+    playlistState.context.currentTrackIndex !== null &&
+      playlistState.context.tracks[playlistState.context.currentTrackIndex]
+      ? playlistState.context.tracks[playlistState.context.currentTrackIndex].id
+      : null;
 
+  const setupAudioRef = useCallback(
+    (node: HTMLAudioElement | null) => {
+      if (node) {
+        send({ type: 'SET_REF', audioRef: node });
+      }
+    },
+    [send],
+  );
 
   useEffect(() => {
     // Only send LOAD if src (fileId) has changed and is not null
@@ -129,9 +36,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onEnded }) => {
 
     const handleEnded = () => {
       send({ type: 'ENDED' });
-      onEnded?.(); // Call the onEnded prop
+      sendToPlaylist({ type: 'PLAY_NEXT' });
     };
-    const handleError = () => send({ type: 'ERROR', message: "Failed to play" });
+    const handleError = () =>
+      send({ type: 'ERROR', message: 'Failed to play' });
 
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('error', handleError);
@@ -140,7 +48,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onEnded }) => {
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError);
     };
-  }, [send, state.context.audioRef, onEnded]);
+  }, [send, state.context.audioRef, sendToPlaylist]);
 
   return (
     <div>
