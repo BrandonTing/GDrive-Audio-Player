@@ -104,9 +104,10 @@ const audioPlayerMachine = createMachine(
 
 interface AudioPlayerProps {
   src: string | null; // Now represents fileId
+  onEnded?: () => void; // New prop for when audio ends
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onEnded }) => {
   const audioId = useId();
   const [state, send] = useMachine(audioPlayerMachine);
 
@@ -126,7 +127,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
     const audio = state.context.audioRef;
     if (!audio) return;
 
-    const handleEnded = () => send({ type: 'ENDED' });
+    const handleEnded = () => {
+      send({ type: 'ENDED' });
+      onEnded?.(); // Call the onEnded prop
+    };
     const handleError = () => send({ type: 'ERROR', message: "Failed to play" });
 
     audio.addEventListener('ended', handleEnded);
@@ -136,7 +140,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError);
     };
-  }, [send, state.context.audioRef]);
+  }, [send, state.context.audioRef, onEnded]);
 
   return (
     <div>

@@ -44,6 +44,10 @@ const HomePage = () => {
     alert(`${file.name} added to playlist!`);
   };
 
+  const handleTrackEnded = () => {
+    sendToPlaylist({ type: 'PLAY_NEXT' });
+  };
+
   return (
     <div>
       <h1>{folderId ? 'Folder Contents' : 'Your Google Drive Files'}</h1>
@@ -96,7 +100,7 @@ const HomePage = () => {
         </ul>
       )}
       <hr />
-      <AudioPlayer src={currentAudioFileId} />
+      <AudioPlayer src={currentAudioFileId} onEnded={handleTrackEnded} />
       <Playlist />
     </div>
   );
