@@ -8,21 +8,25 @@ import HomePage from './pages/HomePage';
 import { homePageLoader } from './pages/HomePage.loader'; // Import the homePageLoader
 import LoginPage from './pages/LoginPage';
 
-// Combine protectedLoader and homePageLoader
-async function rootPageCombinedLoader() {
-  await protectedLoader(); // This will throw a redirect if not authenticated
-  return homePageLoader();
-}
-
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
     children: [
       {
-        index: true,
-        element: <HomePage />,
-        loader: rootPageCombinedLoader, // Use the combined loader
+        loader: protectedLoader,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+            loader: homePageLoader, // Use the combined loader
+          },
+          {
+            path: 'folder/:folderId',
+            element: <HomePage />,
+            loader: homePageLoader, // Use the combined loader for nested folders
+          },
+        ]
       },
       {
         path: 'login',

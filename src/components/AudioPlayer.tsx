@@ -16,12 +16,6 @@ const audioPlayerMachine = createMachine(
     initial: 'idle',
     states: {
       idle: {
-        on: {
-          LOAD: {
-            target: 'loading',
-            actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
-          },
-        },
       },
       loading: {
         invoke: {
@@ -81,6 +75,10 @@ const audioPlayerMachine = createMachine(
       SET_REF: {
         actions: assign({ audioRef: ({ event }) => event.audioRef }),
       },
+      LOAD: {
+        target: '.loading',
+        actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
+      },
     }
   },
   {
@@ -120,6 +118,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   useEffect(() => {
     // Only send LOAD if src (fileId) has changed and is not null
+    console.log(src, state.context.fileId)
     if (src && src !== state.context.fileId) {
       send({ type: 'LOAD', fileId: src });
     }

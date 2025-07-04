@@ -6,17 +6,18 @@ export interface GoogleDriveFile {
   mimeType: string;
 }
 
-export const fetchRootFolderContents = async (): Promise<GoogleDriveFile[]> => {
+export const fetchFolderContents = async (parentId: string | null): Promise<GoogleDriveFile[]> => {
   try {
+    const parentQuery = parentId ? `'${parentId}' in parents` : "'root' in parents";
     const response = await axiosInstance.get('/files', {
       params: {
-        q: "'root' in parents and trashed = false and mimeType contains 'audio/'",
+        q: `${parentQuery} and trashed = false and (mimeType = 'application/vnd.google-apps.folder' or mimeType contains 'audio/')`,
         fields: 'files(id, name, mimeType)',
       },
     });
     return response.data.files;
   } catch (error) {
-    console.error('Error fetching root folder contents:', error);
+    console.error(`Error fetching contents for folder ${parentId || 'root'}:`, error);
     throw error;
   }
 };
