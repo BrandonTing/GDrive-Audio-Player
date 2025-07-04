@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import RootLayout from './layouts/RootLayout';
-import { protectedLoader } from './loaders/protectedLoader';
 import { loginRedirectLoader } from './loaders/loginRedirectLoader'; // Import loginRedirectLoader
+import { protectedLoader } from './loaders/protectedLoader';
 import HomePage from './pages/HomePage';
 import { homePageLoader } from './pages/HomePage.loader'; // Import the homePageLoader
 import LoginPage from './pages/LoginPage';

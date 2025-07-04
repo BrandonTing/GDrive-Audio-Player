@@ -25,7 +25,7 @@ export function useAuthStore() {
   const accessToken = useSyncExternalStore(
     subscribeToLocalStorage,
     getAccessTokenSnapshot,
-    getAccessTokenSnapshot // For SSR, return initial client-side value
+    getAccessTokenSnapshot, // For SSR, return initial client-side value
   );
 
   return !!accessToken; // Return true if token exists, false otherwise

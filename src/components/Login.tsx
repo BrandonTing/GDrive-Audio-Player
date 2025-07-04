@@ -20,7 +20,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   });
 
   return (
-    <button onClick={() => login()}>Sign in with Google</button>
+    <button type="button" onClick={() => login()}>
+      Sign in with Google
+    </button>
   );
 };
 

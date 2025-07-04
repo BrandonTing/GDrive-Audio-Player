@@ -1,5 +1,5 @@
 import { useLoaderData } from 'react-router-dom';
-import { GoogleDriveFile } from '../services/googleDriveService';
+import type { GoogleDriveFile } from '../services/googleDriveService';
 
 interface HomePageLoaderData {
   files: GoogleDriveFile[];
@@ -27,4 +27,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
