@@ -1,24 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
+import RootLayout from './layouts/RootLayout';
 import { protectedLoader } from './loaders/protectedLoader';
-import RootLayout from './layouts/RootLayout'; // Import RootLayout
+import { loginRedirectLoader } from './loaders/loginRedirectLoader'; // Import loginRedirectLoader
+import HomePage from './pages/HomePage';
+import { homePageLoader } from './pages/HomePage.loader'; // Import the homePageLoader
+import LoginPage from './pages/LoginPage';
+
+// Combine protectedLoader and homePageLoader
+async function rootPageCombinedLoader() {
+  await protectedLoader(); // This will throw a redirect if not authenticated
+  return homePageLoader();
+}
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <RootLayout />, // Use RootLayout as the main element
+    path: '/',
+    element: <RootLayout />,
     children: [
       {
-        index: true, // This makes '/' render HomePage
+        index: true,
         element: <HomePage />,
-        loader: protectedLoader,
+        loader: rootPageCombinedLoader, // Use the combined loader
       },
       {
-        path: "login", // Relative path to parent
+        path: 'login',
         element: <LoginPage />,
+        loader: loginRedirectLoader, // Apply loginRedirectLoader to the login route
       },
     ],
   },

@@ -2,7 +2,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { notifyAuthStoreChange } from '../hooks/useAuthStore';
 
 interface LoginProps {
-  onLoginSuccess: (accessToken: string) => void;
+  onLoginSuccess: () => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
@@ -11,7 +11,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       console.log('Login Success:', tokenResponse);
       localStorage.setItem('google_access_token', tokenResponse.access_token);
       notifyAuthStoreChange(); // Notify the store of the change
-      onLoginSuccess(tokenResponse.access_token);
+      onLoginSuccess();
     },
     onError: () => {
       console.log('Login Failed');

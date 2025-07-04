@@ -3,7 +3,7 @@ import { createContext, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
-  onLoginSuccess: (accessToken: string) => void;
+  onLoginSuccess: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,7 +15,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Memoize the context value object, and define onLoginSuccess directly inside
   const contextValue = useMemo(() => {
-    const onLoginSuccess = (accessToken: string) => {
+    const onLoginSuccess = () => {
       navigate('/');
     };
     return { onLoginSuccess };
