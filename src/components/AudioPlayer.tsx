@@ -1,6 +1,5 @@
 import type React from 'react';
 import { useCallback, useEffect, useId } from 'react';
-import toast from 'react-hot-toast';
 import { useAudioPlayerActor } from '../context/AudioPlayerActorContext';
 import { usePlaylist } from '../context/PlaylistContext';
 
@@ -9,18 +8,11 @@ const AudioPlayer: React.FC = () => {
   const [state, send] = useAudioPlayerActor();
   const { playlistState, sendToPlaylist } = usePlaylist();
 
-  const currentTrack =
-    playlistState.context.currentTrackIndex !== null
-      ? playlistState.context.tracks[playlistState.context.currentTrackIndex]
+  const src =
+    playlistState.context.currentTrackIndex !== null &&
+      playlistState.context.tracks[playlistState.context.currentTrackIndex]
+      ? playlistState.context.tracks[playlistState.context.currentTrackIndex].id
       : null;
-
-  const src = currentTrack ? currentTrack.id : null;
-
-  useEffect(() => {
-    if (currentTrack) {
-      toast.success(`Now Playing: ${currentTrack.name}`);
-    }
-  }, [currentTrack]);
 
   const setupAudioRef = useCallback(
     (node: HTMLAudioElement | null) => {

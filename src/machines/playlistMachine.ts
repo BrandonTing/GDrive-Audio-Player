@@ -1,4 +1,5 @@
 import { assign, createMachine } from 'xstate';
+import toast from 'react-hot-toast';
 import { GoogleDriveFile } from '../services/googleDriveService';
 
 const shuffleArray = (array: GoogleDriveFile[]) => {
@@ -81,6 +82,9 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
               currentTrackIndex: ({ context, event }) => {
                 const currentTracks = context.shuffle ? context.shuffledTracks : context.tracks;
                 const index = currentTracks.findIndex((t) => t.id === event.trackId);
+                if (index !== -1) {
+                  toast.success(`Now Playing: ${currentTracks[index].name}`);
+                }
                 return index !== -1 ? index : null;
               },
             }),
@@ -97,8 +101,13 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
 
                 const nextIndex = context.currentTrackIndex + 1;
                 if (nextIndex >= currentTracks.length) {
-                  return context.repeat === 'all' ? 0 : null;
+                  if (context.repeat === 'all') {
+                    toast.success(`Now Playing: ${currentTracks[0].name}`);
+                    return 0;
+                  }
+                  return null;
                 }
+                toast.success(`Now Playing: ${currentTracks[nextIndex].name}`);
                 return nextIndex;
               },
             }),
@@ -109,7 +118,9 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
                 const currentTracks = context.shuffle ? context.shuffledTracks : context.tracks;
                 if (context.currentTrackIndex === null) return 0;
                 const newIndex = context.currentTrackIndex - 1;
-                return newIndex < 0 ? currentTracks.length - 1 : newIndex;
+                const newSafeIndex = newIndex < 0 ? currentTracks.length - 1 : newIndex;
+                toast.success(`Now Playing: ${currentTracks[newSafeIndex].name}`);
+                return newSafeIndex;
               },
             }),
           },
