@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import './App.css';
 import RootLayout from './layouts/RootLayout';
 import { loginRedirectLoader } from './loaders/loginRedirectLoader'; // Import loginRedirectLoader
 import { protectedLoader } from './loaders/protectedLoader';
