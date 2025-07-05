@@ -6,6 +6,7 @@ import {
 } from '../context/AudioPlayerActorContext';
 import { usePlaylist } from '../context/PlaylistContext';
 import type { GoogleDriveFile } from '../services/googleDriveService';
+import toast from 'react-hot-toast';
 
 interface HomePageLoaderData {
   files: GoogleDriveFile[];
@@ -39,7 +40,7 @@ const HomePage = () => {
 
   const handleAddToPlaylist = (file: GoogleDriveFile) => {
     sendToPlaylist({ type: 'ADD_TRACK', track: file });
-    alert(`${file.name} added to playlist!`);
+    toast.success(`${file.name} added to playlist!`);
   };
 
   if (navigation.state === "loading") {
@@ -59,7 +60,7 @@ const HomePage = () => {
             <button
               type="button"
               onClick={handleBackClick}
-              className="mb-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+              className="mb-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
             >
               Back to Parent Folder
             </button>
@@ -94,14 +95,14 @@ const HomePage = () => {
                   <button
                     type="button"
                     onClick={() => handleFileClick(file)}
-                    className="px-3 py-1 bg-green-600 hover:bg-green-700 rounded-md text-white text-sm"
+                    className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-md text-white text-sm"
                   >
                     ▶️ Play
                   </button>
                   <button
                     type="button"
                     onClick={() => handleAddToPlaylist(file)}
-                    className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-md text-white text-sm"
+                    className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-md text-white text-sm"
                   >
                     ➕ Add to Playlist
                   </button>

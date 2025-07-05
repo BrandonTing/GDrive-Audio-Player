@@ -53,7 +53,7 @@ const Playlist: React.FC = () => {
               <li
                 key={track.id}
                 className={`flex items-center justify-between p-2 rounded-md ${
-                  index === currentTrackIndex ? 'bg-blue-700 font-bold' : 'bg-gray-700'
+                  index === currentTrackIndex ? 'bg-gray-600 font-bold' : 'bg-gray-800'
                 }`}
               >
                 <span className="mr-2 truncate">{track.name}</span>
@@ -61,14 +61,14 @@ const Playlist: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handlePlayTrack(track.id)}
-                    className="px-3 py-1 text-sm bg-green-600 rounded-md hover:bg-green-700"
+                    className="px-3 py-1 text-sm bg-gray-700 rounded-md hover:bg-gray-600"
                   >
                     Play
                   </button>
                   <button
                     type="button"
                     onClick={() => handleRemoveTrack(track.id)}
-                    className="px-3 py-1 text-sm bg-red-600 rounded-md hover:bg-red-700"
+                    className="px-3 py-1 text-sm bg-gray-700 rounded-md hover:bg-gray-600"
                   >
                     Remove
                   </button>
@@ -80,21 +80,21 @@ const Playlist: React.FC = () => {
             <button
               type="button"
               onClick={handlePlayPrevious}
-              className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
+              className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
             >
               Previous
             </button>
             <button
               type="button"
               onClick={handlePlayNext}
-              className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
+              className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
             >
               Next
             </button>
             <button
               type="button"
               onClick={handleClearPlaylist}
-              className="px-4 py-2 bg-red-600 rounded-md hover:bg-red-700"
+              className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
             >
               Clear Playlist
             </button>
@@ -103,7 +103,7 @@ const Playlist: React.FC = () => {
               <button
                 type="button"
                 onClick={handlePlayPauseAudioPlayer}
-                className="px-4 py-2 bg-purple-600 rounded-md hover:bg-purple-700"
+                className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
               >
                 {audioPlayerState.matches('playing')
                   ? 'Pause Current'
