@@ -79,20 +79,6 @@ const Playlist: React.FC = () => {
           <div className="flex flex-wrap gap-2 justify-center">
             <button
               type="button"
-              onClick={handlePlayPrevious}
-              className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={handlePlayNext}
-              className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
-            >
-              Next
-            </button>
-            <button
-              type="button"
               onClick={handleClearPlaylist}
               className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
             >

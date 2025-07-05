@@ -121,6 +121,13 @@ const AudioPlayer: React.FC = () => {
           </div>
         </div>
         <div className="flex space-x-4">
+          <button
+            type="button"
+            onClick={() => sendToPlaylist({ type: 'PLAY_PREVIOUS' })}
+            className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
+            >
+            Previous
+          </button>
           {state.matches('playing') && (
             <button
               type="button"
@@ -143,17 +150,23 @@ const AudioPlayer: React.FC = () => {
             )}
           <button
             type="button"
+            onClick={() => sendToPlaylist({ type: 'PLAY_NEXT' })}
+            className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
+            >
+            Next
+          </button>
+          <button
+            type="button"
             onClick={() => sendToPlaylist({ type: 'TOGGLE_SHUFFLE' })}
-            className={`px-4 py-2 rounded-md ${playlistState.context.shuffle ? 'bg-gray-600' : 'bg-gray-800'
-              } hover:bg-gray-700`}
-          >
+            className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
+            >
             Shuffle
           </button>
           <button
             type="button"
             onClick={() => sendToPlaylist({ type: 'TOGGLE_REPEAT' })}
-            className="px-4 py-2 bg-gray-800 rounded-md hover:bg-gray-700"
-          >
+            className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
+            >
             Repeat: {playlistState.context.repeat}
           </button>
         </div>
