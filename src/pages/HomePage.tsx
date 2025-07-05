@@ -43,10 +43,6 @@ const HomePage = () => {
     toast.success(`${file.name} added to playlist!`);
   };
 
-  if (navigation.state === "loading") {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="flex flex-col h-screen">
       <div className="flex flex-1 overflow-hidden">
