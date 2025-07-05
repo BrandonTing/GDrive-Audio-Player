@@ -33,12 +33,29 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>(
   {
     id: 'playlist',
     initial: 'active',
-    context: {
-      tracks: [],
-      shuffledTracks: [],
-      currentTrackIndex: null,
-      shuffle: false,
-      repeat: 'none',
+    context: () => {
+      try {
+        const persistedState = localStorage.getItem('audioPlayerPlaylist');
+        if (persistedState) {
+          const parsedState = JSON.parse(persistedState);
+          return {
+            tracks: parsedState.tracks || [],
+            shuffledTracks: parsedState.shuffledTracks || [],
+            currentTrackIndex: parsedState.currentTrackIndex !== undefined ? parsedState.currentTrackIndex : null,
+            shuffle: parsedState.shuffle || false,
+            repeat: parsedState.repeat || 'none',
+          };
+        }
+      } catch (error) {
+        console.error("Failed to load playlist from localStorage:", error);
+      }
+      return {
+        tracks: [],
+        shuffledTracks: [],
+        currentTrackIndex: null,
+        shuffle: false,
+        repeat: 'none',
+      };
     },
     states: {
       active: {

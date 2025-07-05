@@ -4,7 +4,9 @@ import { usePlaylist } from '../context/PlaylistContext';
 
 const Playlist: React.FC = () => {
   const { playlistState, sendToPlaylist } = usePlaylist();
-  const [audioPlayerState, sendToAudioPlayer] = useAudioPlayerActor(); // Get actor state and send
+  const actorRef = useAudioPlayerActor();
+  const audioPlayerState = actorRef.getSnapshot();
+  const sendToAudioPlayer = actorRef.send;
 
   const { tracks, currentTrackIndex } = playlistState.context;
 
@@ -40,55 +42,59 @@ const Playlist: React.FC = () => {
   };
 
   return (
-    <div
-      style={{ border: '1px solid #ccc', padding: '10px', marginTop: '20px' }}
-    >
-      <h2>Playlist</h2>
+    <div className="p-4 text-white bg-gray-800 rounded-lg shadow-lg">
+      <h2 className="mb-4 text-2xl font-bold">Playlist</h2>
       {tracks.length === 0 ? (
-        <p>Playlist is empty.</p>
+        <p className="text-gray-400">Playlist is empty.</p>
       ) : (
         <>
-          <ul>
+          <ul className="mb-4 space-y-2">
             {tracks.map((track, index) => (
               <li
                 key={track.id}
-                style={{
-                  fontWeight: index === currentTrackIndex ? 'bold' : 'normal',
-                }}
+                className={`flex items-center justify-between p-2 rounded-md ${
+                  index === currentTrackIndex ? 'bg-blue-700 font-bold' : 'bg-gray-700'
+                }`}
               >
-                {track.name}
-                <button
-                  type="button"
-                  onClick={() => handlePlayTrack(track.id)}
-                  style={{ marginLeft: '10px' }}
-                >
-                  Play
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTrack(track.id)}
-                  style={{ marginLeft: '5px' }}
-                >
-                  Remove
-                </button>
+                <span className="mr-2 truncate">{track.name}</span>
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => handlePlayTrack(track.id)}
+                    className="px-3 py-1 text-sm bg-green-600 rounded-md hover:bg-green-700"
+                  >
+                    Play
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTrack(track.id)}
+                    className="px-3 py-1 text-sm bg-red-600 rounded-md hover:bg-red-700"
+                  >
+                    Remove
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
-          <div>
-            <button type="button" onClick={handlePlayPrevious}>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <button
+              type="button"
+              onClick={handlePlayPrevious}
+              className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
+            >
               Previous
             </button>
             <button
               type="button"
               onClick={handlePlayNext}
-              style={{ marginLeft: '10px' }}
+              className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
             >
               Next
             </button>
             <button
               type="button"
               onClick={handleClearPlaylist}
-              style={{ marginLeft: '10px' }}
+              className="px-4 py-2 bg-red-600 rounded-md hover:bg-red-700"
             >
               Clear Playlist
             </button>
@@ -97,7 +103,7 @@ const Playlist: React.FC = () => {
               <button
                 type="button"
                 onClick={handlePlayPauseAudioPlayer}
-                style={{ marginLeft: '10px' }}
+                className="px-4 py-2 bg-purple-600 rounded-md hover:bg-purple-700"
               >
                 {audioPlayerState.matches('playing')
                   ? 'Pause Current'

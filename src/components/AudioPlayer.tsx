@@ -5,7 +5,9 @@ import { usePlaylist } from '../context/PlaylistContext';
 
 const AudioPlayer: React.FC = () => {
   const audioId = useId();
-  const [state, send] = useAudioPlayerActor();
+  const actorRef = useAudioPlayerActor();
+  const state = actorRef.getSnapshot();
+  const send = actorRef.send;
   const { playlistState, sendToPlaylist } = usePlaylist();
 
   const src =
@@ -44,7 +46,7 @@ const AudioPlayer: React.FC = () => {
       send({ type: 'UPDATE_TIME', time: audio.currentTime });
     };
     const handleLoadedData = () => {
-        send({ type: 'LOAD' });
+      send({ type: 'LOAD' });
     };
 
     audio.addEventListener('ended', handleEnded);
@@ -73,7 +75,7 @@ const AudioPlayer: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center p-4 text-white bg-gray-900">
       <audio
         id={audioId}
         ref={setupAudioRef}
@@ -82,11 +84,11 @@ const AudioPlayer: React.FC = () => {
       >
         <track kind="captions" />
       </audio>
-      <p>Status: {String(state.value)}</p>
+      <p className="mb-2 text-sm">Status: {String(state.value)}</p>
       {state.matches('error') && (
-        <p style={{ color: 'red' }}>Error: {state.context.error}</p>
+        <p className="mb-2 text-sm text-red-500">Error: {state.context.error}</p>
       )}
-      <div>
+      <div className="flex flex-col items-center space-y-4 w-full max-w-lg">
         <input
           type="range"
           min="0"
@@ -94,34 +96,45 @@ const AudioPlayer: React.FC = () => {
           step="0.01"
           value={state.context.currentTime}
           onChange={handleSeek}
+          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
         />
-        {state.matches('playing') && (
-          <button type="button" onClick={() => send({ type: 'PAUSE' })}>
-            Pause
-          </button>
-        )}
-        {(state.matches('idle') ||
-          state.matches('error') ||
-          (state.matches('paused') && state.context.blobUrl)) && (
-            <button type="button" onClick={() => send({ type: 'PLAY' })}>
-              Play
+        <div className="flex space-x-4">
+          {state.matches('playing') && (
+            <button
+              type="button"
+              onClick={() => send({ type: 'PAUSE' })}
+              className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
+            >
+              Pause
             </button>
           )}
-        <button
-          type="button"
-          onClick={() => sendToPlaylist({ type: 'TOGGLE_SHUFFLE' })}
-          style={{
-            color: playlistState.context.shuffle ? 'green' : 'black',
-          }}
-        >
-          Shuffle
-        </button>
-        <button
-          type="button"
-          onClick={() => sendToPlaylist({ type: 'TOGGLE_REPEAT' })}
-        >
-          Repeat: {playlistState.context.repeat}
-        </button>
+          {(state.matches('idle') ||
+            state.matches('error') ||
+            (state.matches('paused') && state.context.blobUrl)) && (
+              <button
+                type="button"
+                onClick={() => send({ type: 'PLAY' })}
+                className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
+              >
+                Play
+              </button>
+            )}
+          <button
+            type="button"
+            onClick={() => sendToPlaylist({ type: 'TOGGLE_SHUFFLE' })}
+            className={`px-4 py-2 rounded-md ${playlistState.context.shuffle ? 'bg-green-600' : 'bg-gray-600'
+              } hover:bg-green-700`}
+          >
+            Shuffle
+          </button>
+          <button
+            type="button"
+            onClick={() => sendToPlaylist({ type: 'TOGGLE_REPEAT' })}
+            className="px-4 py-2 bg-gray-600 rounded-md hover:bg-gray-700"
+          >
+            Repeat: {playlistState.context.repeat}
+          </button>
+        </div>
         <input
           type="range"
           min="0"
@@ -129,8 +142,9 @@ const AudioPlayer: React.FC = () => {
           step="0.01"
           value={state.context.volume}
           onChange={handleVolumeChange}
+          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
         />
-        {state.matches('loading') && <p>Loading...</p>}
+        {state.matches('loading') && <p className="text-yellow-500">Loading...</p>}
       </div>
     </div>
   );

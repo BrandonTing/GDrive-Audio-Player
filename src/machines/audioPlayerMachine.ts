@@ -53,7 +53,7 @@ export const audioPlayerMachine = createMachine({
     loading: {
       invoke: {
         id: 'loadAudio',
-        src: fromPromise(({ context }) => getAudioFileBlobUrl(context.fileId!)),
+        src: fromPromise<string, { fileId: string }>(({ input }) => getAudioFileBlobUrl(input.fileId)),
         onDone: {
           target: 'playing',
           actions: assign({ blobUrl: ({ event }) => event.output }),
@@ -62,6 +62,7 @@ export const audioPlayerMachine = createMachine({
           target: 'error',
           actions: assign({ error: ({ event }) => (event.error as Error).message }),
         },
+        input: ({ context }) => ({ fileId: context.fileId }),
       },
     },
     playing: {
@@ -103,9 +104,10 @@ export const audioPlayerMachine = createMachine({
       },
     },
   },
+},
   {
     actions: {
-      playAudio: ({ context, input }) => {
+      playAudio: ({ context }) => {
         const audio = context.audioRef;
         if (audio) {
           // Ensure src is set before playing if it's not already
@@ -149,4 +151,4 @@ export const audioPlayerMachine = createMachine({
       },
     },
   },
-});
+);

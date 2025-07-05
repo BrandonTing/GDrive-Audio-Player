@@ -47,61 +47,86 @@ const HomePage = () => {
   }
 
   return (
-    <div>
-      <h1>{folderId ? 'Folder Contents' : 'Your Google Drive Files'}</h1>
+    <div className="flex flex-col h-screen">
+      <div className="flex flex-1 overflow-hidden">
+        {/* File Browser Section */}
+        <div className="flex-1 p-5 overflow-y-auto">
+          <h1 className="text-3xl font-bold mb-4">
+            {folderId ? 'Folder Contents' : 'Your Google Drive Files'}
+          </h1>
 
-      {folderId && (
-        <button
-          type="button"
-          onClick={handleBackClick}
-          style={{ marginBottom: '10px' }}
-        >
-          Back to Parent Folder
-        </button>
-      )}
+          {folderId && (
+            <button
+              type="button"
+              onClick={handleBackClick}
+              className="mb-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+            >
+              Back to Parent Folder
+            </button>
+          )}
 
-      <h2>Folders</h2>
-      {folders.length === 0 ? (
-        <p>No subfolders found.</p>
-      ) : (
-        <ul>
-          {folders.map((folder) => (
-            <li key={folder.id}>
-              <button type="button" onClick={() => handleFolderClick(folder)}>
-                📁 {folder.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+          <h2 className="text-2xl font-semibold mb-3">Folders</h2>
+          {folders.length === 0 ? (
+            <p className="text-gray-400">No subfolders found.</p>
+          ) : (
+            <ul className="space-y-2">
+              {folders.map((folder) => (
+                <li key={folder.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleFolderClick(folder)}
+                    className="text-blue-400 hover:text-blue-300 text-lg"
+                  >
+                    📁 {folder.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
 
-      <h2>Audio Files</h2>
-      {audioFiles.length === 0 ? (
-        <p>No audio files found in this folder.</p>
-      ) : (
-        <ul>
-          {audioFiles.map((file) => (
-            <li key={file.id}>
-              <button type="button" onClick={() => handleFileClick(file)}>
-                ▶️ Play
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAddToPlaylist(file)}
-                style={{ marginLeft: '10px' }}
-              >
-                ➕ Add to Playlist
-              </button>
-              {file.name} ({file.mimeType})
-            </li>
-          ))}
-        </ul>
-      )}
-      <hr />
-      <AudioPlayerActorProvider>
-        <AudioPlayer />
-        <Playlist />
-      </AudioPlayerActorProvider>
+          <h2 className="text-2xl font-semibold mt-6 mb-3">Audio Files</h2>
+          {audioFiles.length === 0 ? (
+            <p className="text-gray-400">No audio files found in this folder.</p>
+          ) : (
+            <ul className="space-y-2">
+              {audioFiles.map((file) => (
+                <li key={file.id} className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => handleFileClick(file)}
+                    className="px-3 py-1 bg-green-600 hover:bg-green-700 rounded-md text-white text-sm"
+                  >
+                    ▶️ Play
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAddToPlaylist(file)}
+                    className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-md text-white text-sm"
+                  >
+                    ➕ Add to Playlist
+                  </button>
+                  <span className="text-lg">{file.name}</span>
+                  <span className="text-gray-500 text-sm">({file.mimeType})</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Playlist Section */}
+        <div className="w-80 p-5 border-l border-gray-700 overflow-y-auto bg-gray-800">
+          <AudioPlayerActorProvider>
+            <Playlist />
+          </AudioPlayerActorProvider>
+        </div>
+      </div>
+
+      {/* Audio Player Section (Fixed at bottom) */}
+      <div className="border-t border-gray-700 bg-gray-900 p-4">
+        <AudioPlayerActorProvider>
+          <AudioPlayer />
+        </AudioPlayerActorProvider>
+      </div>
     </div>
   );
 };
