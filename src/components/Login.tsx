@@ -25,7 +25,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       onClick={() => login()}
       className="flex justify-center items-center px-6 py-3 w-full font-semibold text-white bg-blue-600 rounded-lg shadow-md transition duration-300 ease-in-out hover:bg-blue-700"
     >
-      <img src="https://www.gstatic.com/images/branding/googleg/1x/googleg_standard_color_18dp.png" alt="Google icon" className="mr-2 w-5 h-5" />
+      <img
+        src="https://www.gstatic.com/images/branding/googleg/1x/googleg_standard_color_18dp.png"
+        alt="Google icon"
+        className="mr-2 w-5 h-5"
+      />
       Sign in with Google
     </button>
   );

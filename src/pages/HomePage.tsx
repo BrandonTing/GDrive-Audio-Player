@@ -1,12 +1,10 @@
-import { useLoaderData, useNavigate, useParams, useNavigation } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import AudioPlayer from '../components/AudioPlayer';
 import Playlist from '../components/Playlist';
-import {
-  AudioPlayerActorProvider
-} from '../context/AudioPlayerActorContext';
+import { AudioPlayerActorProvider } from '../context/AudioPlayerActorContext';
 import { usePlaylist } from '../context/PlaylistContext';
 import type { GoogleDriveFile } from '../services/googleDriveService';
-import toast from 'react-hot-toast';
 
 interface HomePageLoaderData {
   files: GoogleDriveFile[];
@@ -16,7 +14,7 @@ const HomePage = () => {
   const { files } = useLoaderData() as HomePageLoaderData;
   const { folderId } = useParams<{ folderId?: string }>();
   const navigate = useNavigate();
-  const navigation = useNavigation();
+
   const { sendToPlaylist } = usePlaylist();
 
   const folders = files.filter(
@@ -84,7 +82,9 @@ const HomePage = () => {
 
           <h2 className="text-2xl font-semibold mt-6 mb-3">Audio Files</h2>
           {audioFiles.length === 0 ? (
-            <p className="text-gray-400">No audio files found in this folder.</p>
+            <p className="text-gray-400">
+              No audio files found in this folder.
+            </p>
           ) : (
             <ul className="space-y-2">
               {audioFiles.map((file) => (
@@ -104,7 +104,9 @@ const HomePage = () => {
                     ➕ Add to Playlist
                   </button>
                   <span className="text-lg">{file.name}</span>
-                  <span className="text-gray-500 text-sm">({file.mimeType})</span>
+                  <span className="text-gray-500 text-sm">
+                    ({file.mimeType})
+                  </span>
                 </li>
               ))}
             </ul>

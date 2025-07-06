@@ -1,6 +1,9 @@
 import type React from 'react';
 import { useCallback, useEffect, useId } from 'react';
-import { useAudioPlayerActor, useAudioPlayerSelector } from '../context/AudioPlayerActorContext';
+import {
+  useAudioPlayerActor,
+  useAudioPlayerSelector,
+} from '../context/AudioPlayerActorContext';
 import { usePlaylist } from '../context/PlaylistContext';
 
 const formatTime = (timeInSeconds: number): string => {
@@ -14,13 +17,13 @@ const AudioPlayer: React.FC = () => {
   const seekBarId = useId();
   const volumeControlId = useId();
   const actorRef = useAudioPlayerActor();
-  const state = useAudioPlayerSelector(state => state);
+  const state = useAudioPlayerSelector((state) => state);
   const send = actorRef.send;
   const { playlistState, sendToPlaylist } = usePlaylist();
 
   const src =
     playlistState.context.currentTrackIndex !== null &&
-      playlistState.context.tracks[playlistState.context.currentTrackIndex]
+    playlistState.context.tracks[playlistState.context.currentTrackIndex]
       ? playlistState.context.tracks[playlistState.context.currentTrackIndex].id
       : null;
 
@@ -59,26 +62,50 @@ const AudioPlayer: React.FC = () => {
         preload="auto"
         onEnded={() => send({ type: 'ENDED' })}
         onError={() => send({ type: 'ERROR', message: 'Failed to play' })}
-        onTimeUpdate={() => send({ type: 'UPDATE_TIME', time: state.context.audioRef?.currentTime })}
+        onTimeUpdate={() =>
+          send({
+            type: 'UPDATE_TIME',
+            time: state.context.audioRef?.currentTime,
+          })
+        }
         onLoadedData={() => send({ type: 'LOAD_AUDIO' })}
-        onLoadedMetadata={() => send({ type: 'UPDATE_DURATION', duration: state.context.audioRef?.duration })}
+        onLoadedMetadata={() =>
+          send({
+            type: 'UPDATE_DURATION',
+            duration: state.context.audioRef?.duration,
+          })
+        }
         autoPlay
       >
         <track kind="captions" />
       </audio>
       {playlistState.context.currentTrackIndex !== null &&
-        playlistState.context.tracks[playlistState.context.currentTrackIndex] && (
+        playlistState.context.tracks[
+          playlistState.context.currentTrackIndex
+        ] && (
           <p className="mb-2 text-lg font-semibold">
-            Now Playing: {playlistState.context.tracks[playlistState.context.currentTrackIndex].name}
+            Now Playing:{' '}
+            {
+              playlistState.context.tracks[
+                playlistState.context.currentTrackIndex
+              ].name
+            }
           </p>
         )}
       <p className="mb-2 text-sm">Status: {String(state.value)}</p>
       {state.matches('error') && (
-        <p className="mb-2 text-sm text-red-500">Error: {state.context.error}</p>
+        <p className="mb-2 text-sm text-red-500">
+          Error: {state.context.error}
+        </p>
       )}
       <div className="flex flex-col items-center space-y-4 w-full max-w-lg">
         <div className="w-full">
-          <label htmlFor="seek-bar" className="block text-sm font-medium text-gray-300">Seek:</label>
+          <label
+            htmlFor="seek-bar"
+            className="block text-sm font-medium text-gray-300"
+          >
+            Seek:
+          </label>
           <input
             id={seekBarId}
             type="range"
@@ -114,14 +141,14 @@ const AudioPlayer: React.FC = () => {
           {(state.matches('idle') ||
             state.matches('error') ||
             (state.matches('paused') && state.context.blobUrl)) && (
-              <button
-                type="button"
-                onClick={() => send({ type: 'PLAY' })}
-                className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
-              >
-                Play
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => send({ type: 'PLAY' })}
+              className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
+            >
+              Play
+            </button>
+          )}
           <button
             type="button"
             onClick={() => sendToPlaylist({ type: 'PLAY_NEXT' })}
@@ -145,7 +172,12 @@ const AudioPlayer: React.FC = () => {
           </button>
         </div>
         <div className="w-full">
-          <label htmlFor="volume-control" className="block text-sm font-medium text-gray-300">Volume: {Math.round(state.context.volume * 100)}%</label>
+          <label
+            htmlFor="volume-control"
+            className="block text-sm font-medium text-gray-300"
+          >
+            Volume: {Math.round(state.context.volume * 100)}%
+          </label>
           <input
             id={volumeControlId}
             type="range"
@@ -157,7 +189,9 @@ const AudioPlayer: React.FC = () => {
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
           />
         </div>
-        {state.matches('loading') && <p className="text-yellow-500">Loading...</p>}
+        {state.matches('loading') && (
+          <p className="text-yellow-500">Loading...</p>
+        )}
       </div>
     </div>
   );

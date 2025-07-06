@@ -27,7 +27,7 @@ const router = createBrowserRouter([
             element: <HomePage />,
             loader: homePageLoader, // Use the combined loader for nested folders
           },
-        ]
+        ],
       },
       {
         path: 'login',

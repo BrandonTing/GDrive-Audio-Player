@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from 'react-router-dom';
 import { fetchFolderContents } from '../services/googleDriveService';
 
 export async function homePageLoader({ params }: LoaderFunctionArgs) {
-  console.log(params)
+  console.log(params);
   const folderId = params.folderId as string | undefined;
   try {
     const files = await fetchFolderContents(folderId || null);

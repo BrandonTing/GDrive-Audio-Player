@@ -1,10 +1,10 @@
 import type React from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Outlet, useNavigation } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { AuthProvider } from '../context/AuthContext';
 import { PlaylistProvider } from '../context/PlaylistContext'; // Import PlaylistProvider
 import { useLoadGapi } from '../hooks/useLoadGapi';
-import LoadingSpinner from '../components/LoadingSpinner';
 
 const RootLayout: React.FC = () => {
   useLoadGapi();
@@ -12,9 +12,11 @@ const RootLayout: React.FC = () => {
 
   return (
     <AuthProvider>
-      <PlaylistProvider> {/* Wrap Outlet with PlaylistProvider */}
+      <PlaylistProvider>
+        {' '}
+        {/* Wrap Outlet with PlaylistProvider */}
         <Toaster />
-        {navigation.state === "loading" && <LoadingSpinner />}
+        {navigation.state === 'loading' && <LoadingSpinner />}
         <Outlet />
       </PlaylistProvider>
     </AuthProvider>

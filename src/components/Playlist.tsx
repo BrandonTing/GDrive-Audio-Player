@@ -30,16 +30,6 @@ const Playlist: React.FC = () => {
     }
   };
 
-  const handlePlayNext = () => {
-    sendToPlaylist({ type: 'PLAY_NEXT' });
-    sendToAudioPlayer({ type: 'PLAY' });
-  };
-
-  const handlePlayPrevious = () => {
-    sendToPlaylist({ type: 'PLAY_PREVIOUS' });
-    sendToAudioPlayer({ type: 'PLAY' });
-  };
-
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg shadow-lg">
       <h2 className="mb-4 text-2xl font-bold">Playlist</h2>
@@ -52,7 +42,9 @@ const Playlist: React.FC = () => {
               <li
                 key={track.id}
                 className={`flex items-center justify-between p-2 rounded-md ${
-                  index === currentTrackIndex ? 'bg-gray-600 font-bold' : 'bg-gray-800'
+                  index === currentTrackIndex
+                    ? 'bg-gray-600 font-bold'
+                    : 'bg-gray-800'
                 }`}
               >
                 <span className="mr-2 truncate">{track.name}</span>

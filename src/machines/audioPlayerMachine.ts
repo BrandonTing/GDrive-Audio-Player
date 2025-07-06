@@ -1,124 +1,111 @@
 import { assign, createMachine, fromPromise } from 'xstate';
 import { getAudioFileBlobUrl } from '../services/googleDriveService';
 
-// Define the machine's context (state)
-interface AudioPlayerContext {
-  blobUrl: string | null; // Stores the Blob URL for the audio element
-  error: string | null;
-  fileId: string | null; // Stores the current fileId being processed
-  audioRef: HTMLAudioElement | null; // Reference to the audio DOM element
-  volume: number;
-  duration: number;
-  currentTime: number;
-}
-
-// Define the machine's events
-type AudioPlayerEvent =
-  | { type: 'LOAD'; fileId: string }
-  | { type: 'PLAY' }
-  | { type: 'PAUSE' }
-  | { type: 'ENDED' }
-  | { type: 'ERROR'; message: string }
-  | { type: 'SET_REF'; audioRef: HTMLAudioElement | null }
-  | { type: 'SET_VOLUME'; volume: number }
-  | { type: 'UPDATE_TIME'; time: number }
-  | { type: 'SEEK'; time: number }
-  | { type: 'UPDATE_DURATION'; duration: number };
-
-// Define the machine's input (for invoked actors and actions)
-interface AudioPlayerMachineInput {
-  audioRef: React.RefObject<HTMLAudioElement>;
-}
-
-export const audioPlayerMachine = createMachine({
-  id: 'audioPlayer',
-  context: {
-    blobUrl: null,
-    error: null as string | null,
-    fileId: null,
-    audioRef: null as HTMLAudioElement | null,
-    volume: 1,
-    duration: 0,
-    currentTime: 0,
+export const audioPlayerMachine = createMachine(
+  {
+    id: 'audioPlayer',
+    context: {
+      blobUrl: null,
+      error: null as string | null,
+      fileId: null,
+      audioRef: null as HTMLAudioElement | null,
+      volume: 1,
+      duration: 0,
+      currentTime: 0,
+    },
+    initial: 'idle',
+    states: {
+      idle: {},
+      loading: {
+        invoke: {
+          id: 'loadAudio',
+          src: fromPromise<string, { fileId: string }>(({ input }) =>
+            getAudioFileBlobUrl(input.fileId),
+          ),
+          onDone: {
+            target: 'loadingAudio',
+            actions: assign({ blobUrl: ({ event }) => event.output }),
+          },
+          onError: {
+            target: 'error',
+            actions: assign({
+              error: ({ event }) => (event.error as Error).message,
+            }),
+          },
+          input: ({ context }) => ({ fileId: context.fileId }),
+        },
+      },
+      loadingAudio: {
+        on: {
+          LOAD_AUDIO: {
+            target: 'playing',
+          },
+        },
+      },
+      playing: {
+        entry: 'playAudio',
+        on: {
+          PAUSE: 'paused',
+          ENDED: 'idle',
+          ERROR: {
+            target: 'error',
+            actions: assign({ error: ({ event }) => event.message }),
+          },
+          SET_VOLUME: {
+            actions: 'setVolume',
+          },
+          UPDATE_TIME: {
+            actions: 'updateTime',
+          },
+          SEEK: {
+            actions: 'seek',
+          },
+        },
+      },
+      paused: {
+        entry: 'pauseAudio',
+        on: {
+          PLAY: 'playing',
+          LOAD: {
+            target: 'loading',
+            actions: assign({
+              fileId: ({ event }) => event.fileId,
+              error: null,
+              blobUrl: null,
+            }),
+          },
+        },
+      },
+      error: {
+        on: {
+          LOAD: {
+            target: 'loading',
+            actions: assign({
+              fileId: ({ event }) => event.fileId,
+              error: null,
+              blobUrl: null,
+            }),
+          },
+        },
+      },
+    },
+    on: {
+      LOAD: {
+        target: '.loading',
+        actions: assign({
+          fileId: ({ event }) => event.fileId,
+          error: null,
+          blobUrl: null,
+        }),
+      },
+      SET_REF: {
+        actions: assign({ audioRef: ({ event }) => event.audioRef }),
+      },
+      UPDATE_DURATION: {
+        actions: assign({ duration: ({ event }) => event.duration }),
+      },
+    },
   },
-  initial: 'idle',
-  states: {
-    idle: {
-    },
-    loading: {
-      invoke: {
-        id: 'loadAudio',
-        src: fromPromise<string, { fileId: string }>(({ input }) => getAudioFileBlobUrl(input.fileId)),
-        onDone: {
-          target: 'loadingAudio',
-          actions: assign({ blobUrl: ({ event }) => event.output }),
-        },
-        onError: {
-          target: 'error',
-          actions: assign({ error: ({ event }) => (event.error as Error).message }),
-        },
-        input: ({ context }) => ({ fileId: context.fileId }),
-      },
-    },
-    loadingAudio: {
-      on: {
-        LOAD_AUDIO: {
-          target: 'playing',
-        },
-      },
-    },
-    playing: {
-      entry: 'playAudio',
-      on: {
-        PAUSE: 'paused',
-        ENDED: 'idle',
-        ERROR: {
-          target: 'error',
-          actions: assign({ error: ({ event }) => event.message }),
-        },
-        SET_VOLUME: {
-          actions: 'setVolume',
-        },
-        UPDATE_TIME: {
-          actions: 'updateTime',
-        },
-        SEEK: {
-          actions: 'seek',
-        },
-      },
-    },
-    paused: {
-      entry: 'pauseAudio',
-      on: {
-        PLAY: 'playing',
-        LOAD: {
-          target: 'loading',
-          actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
-        },
-      },
-    },
-    error: {
-      on: {
-        LOAD: {
-          target: 'loading',
-          actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
-        },
-      },
-    },
-  },
-  on: {
-    LOAD: {
-      target: '.loading',
-      actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
-    },
-    SET_REF: {
-      actions: assign({ audioRef: ({ event }) => event.audioRef }),
-    },
-    UPDATE_DURATION: {
-      actions: assign({ duration: ({ event }) => event.duration }),
-    }
-  }
-},
   {
     actions: {
       playAudio: ({ context }) => {
@@ -130,7 +117,7 @@ export const audioPlayerMachine = createMachine({
             audio.load(); // Load the new source
           }
           audio.volume = context.volume;
-          audio.play().catch(e => console.error("Error playing audio:", e));
+          audio.play().catch((e) => console.error('Error playing audio:', e));
         }
       },
       pauseAudio: ({ context }) => {
