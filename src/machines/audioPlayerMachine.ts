@@ -110,6 +110,9 @@ export const audioPlayerMachine = createMachine({
       target: '.loading',
       actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
     },
+    SET_REF: {
+      actions: assign({ audioRef: ({ event }) => event.audioRef }),
+    }
   }
 },
   {
