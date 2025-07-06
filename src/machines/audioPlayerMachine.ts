@@ -22,7 +22,8 @@ type AudioPlayerEvent =
   | { type: 'SET_REF'; audioRef: HTMLAudioElement | null }
   | { type: 'SET_VOLUME'; volume: number }
   | { type: 'UPDATE_TIME'; time: number }
-  | { type: 'SEEK'; time: number };
+  | { type: 'SEEK'; time: number }
+  | { type: 'UPDATE_DURATION'; duration: number };
 
 // Define the machine's input (for invoked actors and actions)
 interface AudioPlayerMachineInput {
@@ -112,6 +113,9 @@ export const audioPlayerMachine = createMachine({
     },
     SET_REF: {
       actions: assign({ audioRef: ({ event }) => event.audioRef }),
+    },
+    UPDATE_DURATION: {
+      actions: assign({ duration: ({ event }) => event.duration }),
     }
   }
 },

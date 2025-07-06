@@ -61,6 +61,7 @@ const AudioPlayer: React.FC = () => {
         onError={() => send({ type: 'ERROR', message: 'Failed to play' })}
         onTimeUpdate={() => send({ type: 'UPDATE_TIME', time: state.context.audioRef?.currentTime })}
         onLoadedData={() => send({ type: 'LOAD_AUDIO' })}
+        onLoadedMetadata={() => send({ type: 'UPDATE_DURATION', duration: state.context.audioRef?.duration })}
         autoPlay
       >
         <track kind="captions" />
