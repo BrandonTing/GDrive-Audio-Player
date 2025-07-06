@@ -16,7 +16,6 @@ const Playlist: React.FC = () => {
 
   const handlePlayTrack = (trackId: string) => {
     sendToPlaylist({ type: 'PLAY_TRACK', trackId });
-    sendToAudioPlayer({ type: 'PLAY' });
   };
 
   const handleClearPlaylist = () => {

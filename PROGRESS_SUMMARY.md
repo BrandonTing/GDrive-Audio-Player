@@ -15,7 +15,7 @@ This document summarizes the current state of the GDrive Audio Player project.
 - **Playlist UI:** `Playlist.tsx` component developed to display and interact with the playlist.
 - **Integration:** The `AudioPlayer` is fully integrated with the playlist system.
 
-## Phase 3: Advanced Features & UI/UX Polish (In Progress)
+## Phase 3: Advanced Features & UI/UX Polish (Completed)
 
 - **Advanced Player Controls (Completed):**
     - [x] **Shuffle & Repeat:** Implemented shuffle and repeat (`one`, `all`, `none`) functionality in the `playlistMachine` with corresponding UI controls.
@@ -26,8 +26,8 @@ This document summarizes the current state of the GDrive Audio Player project.
     - [x] **Loading Indicators:** The UI now shows a loading state while fetching files.
     - [x] **Toast Notifications:** Implemented `react-hot-toast` for "Now Playing" notifications, with the logic centralized inside the `playlistMachine`.
     - [x] **Modern Layout & Styling:** Implemented a modern two-column layout with a fixed audio player using Tailwind CSS. Applied Tailwind classes to `HomePage.tsx`, `AudioPlayer.tsx`, and `Playlist.tsx` for improved visual design and responsiveness.
+    - [x] **UI/UX Polish:** Improved the overall visual design and layout for a more modern and responsive user experience.
 
-## Next Steps:
+## Phase 4: Future Enhancements (In Progress)
 
-- **UI/UX Polish:** Improve the overall visual design and layout for a more modern and responsive user experience.
 - **Persistence:** Persist the user's playlist and current track to `localStorage` to allow for session resumption.

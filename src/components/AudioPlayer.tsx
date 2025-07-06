@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useCallback, useEffect, useId } from 'react';
-import { useAudioPlayerActor } from '../context/AudioPlayerActorContext';
+import { useAudioPlayerActor, useAudioPlayerSelector } from '../context/AudioPlayerActorContext';
 import { usePlaylist } from '../context/PlaylistContext';
 
 const formatTime = (timeInSeconds: number): string => {
@@ -14,7 +14,7 @@ const AudioPlayer: React.FC = () => {
   const seekBarId = useId();
   const volumeControlId = useId();
   const actorRef = useAudioPlayerActor();
-  const state = actorRef.getSnapshot();
+  const state = useAudioPlayerSelector(state => state);
   const send = actorRef.send;
   const { playlistState, sendToPlaylist } = usePlaylist();
 
@@ -40,38 +40,6 @@ const AudioPlayer: React.FC = () => {
     }
   }, [src, state.context.fileId, send]);
 
-  useEffect(() => {
-    const audio = state.context.audioRef;
-    if (!audio) return;
-
-    const handleEnded = () => {
-      send({ type: 'ENDED' });
-      sendToPlaylist({ type: 'PLAY_NEXT' });
-    };
-    const handleError = () =>
-      send({ type: 'ERROR', message: 'Failed to play' });
-    const handleTimeUpdate = () => {
-      send({ type: 'UPDATE_TIME', time: audio.currentTime });
-    };
-    const handleLoadedData = () => {
-      send({ type: 'LOAD' });
-    };
-
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('loadeddata', handleLoadedData);
-
-
-    return () => {
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('loadeddata', handleLoadedData);
-
-    };
-  }, [send, state.context.audioRef, sendToPlaylist]);
-
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const volume = parseFloat(e.target.value);
     send({ type: 'SET_VOLUME', volume });
@@ -89,6 +57,11 @@ const AudioPlayer: React.FC = () => {
         ref={setupAudioRef}
         src={state.context.blobUrl || undefined} // Use blobUrl for audio element src
         preload="auto"
+        onEnded={() => send({ type: 'ENDED' })}
+        onError={() => send({ type: 'ERROR', message: 'Failed to play' })}
+        onTimeUpdate={() => send({ type: 'UPDATE_TIME', time: state.context.audioRef?.currentTime })}
+        onLoadedData={() => send({ type: 'LOAD_AUDIO' })}
+        autoPlay
       >
         <track kind="captions" />
       </audio>
@@ -125,7 +98,7 @@ const AudioPlayer: React.FC = () => {
             type="button"
             onClick={() => sendToPlaylist({ type: 'PLAY_PREVIOUS' })}
             className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
-            >
+          >
             Previous
           </button>
           {state.matches('playing') && (
@@ -152,21 +125,21 @@ const AudioPlayer: React.FC = () => {
             type="button"
             onClick={() => sendToPlaylist({ type: 'PLAY_NEXT' })}
             className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
-            >
+          >
             Next
           </button>
           <button
             type="button"
             onClick={() => sendToPlaylist({ type: 'TOGGLE_SHUFFLE' })}
             className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
-            >
+          >
             Shuffle
           </button>
           <button
             type="button"
             onClick={() => sendToPlaylist({ type: 'TOGGLE_REPEAT' })}
             className="px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600"
-            >
+          >
             Repeat: {playlistState.context.repeat}
           </button>
         </div>

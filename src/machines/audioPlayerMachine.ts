@@ -43,19 +43,13 @@ export const audioPlayerMachine = createMachine({
   initial: 'idle',
   states: {
     idle: {
-      on: {
-        LOAD: {
-          target: 'loading',
-          actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
-        },
-      },
     },
     loading: {
       invoke: {
         id: 'loadAudio',
         src: fromPromise<string, { fileId: string }>(({ input }) => getAudioFileBlobUrl(input.fileId)),
         onDone: {
-          target: 'playing',
+          target: 'loadingAudio',
           actions: assign({ blobUrl: ({ event }) => event.output }),
         },
         onError: {
@@ -63,6 +57,13 @@ export const audioPlayerMachine = createMachine({
           actions: assign({ error: ({ event }) => (event.error as Error).message }),
         },
         input: ({ context }) => ({ fileId: context.fileId }),
+      },
+    },
+    loadingAudio: {
+      on: {
+        LOAD_AUDIO: {
+          target: 'playing',
+        },
       },
     },
     playing: {
@@ -104,6 +105,12 @@ export const audioPlayerMachine = createMachine({
       },
     },
   },
+  on: {
+    LOAD: {
+      target: '.loading',
+      actions: assign({ fileId: ({ event }) => event.fileId, error: null, blobUrl: null }),
+    },
+  }
 },
   {
     actions: {

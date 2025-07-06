@@ -25,6 +25,7 @@ const HomePage = () => {
   const audioFiles = files.filter((file) => file.mimeType.startsWith('audio/'));
 
   const handleFileClick = (file: GoogleDriveFile) => {
+    sendToPlaylist({ type: 'ADD_TRACK', track: file });
     sendToPlaylist({ type: 'PLAY_TRACK', trackId: file.id });
   };
 
