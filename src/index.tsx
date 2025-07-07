@@ -36,7 +36,9 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+], {
+  basename: '/GDrive-Audio-Player',
+});
 
 const rootEl = document.getElementById('root');
 if (rootEl) {

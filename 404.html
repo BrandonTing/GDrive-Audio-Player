@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script type="text/javascript">
+      // Get the current path
+      var path = window.location.pathname;
+      // Get the base path (e.g., /GDrive-Audio-Player)
+      var basename = '/GDrive-Audio-Player'; // Ensure this matches your basename
+      // Construct the new URL
+      var newUrl = basename + '/#' + path.substring(basename.length);
+      // Redirect
+      window.location.replace(newUrl);
+    </script>
+  </head>
+  <body>
+    If you are not redirected automatically, follow this
+    <a href="/GDrive-Audio-Player/">link</a>.
+  </body>
+</html>
