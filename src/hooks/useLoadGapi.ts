@@ -10,7 +10,6 @@ export function useLoadGapi() {
     script.defer = true;
 
     script.onload = () => {
-      console.log('gapi.js loaded');
       loadGapi();
     };
 
