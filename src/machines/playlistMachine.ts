@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { assign, createMachine } from 'xstate';
+import { assign, setup } from 'xstate';
 import type { GoogleDriveFile } from '../services/googleDriveService';
 
 const shuffleArray = (array: GoogleDriveFile[]) => {
@@ -29,7 +29,12 @@ type PlaylistEvent =
   | { type: 'TOGGLE_SHUFFLE' }
   | { type: 'TOGGLE_REPEAT' };
 
-const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>({
+const playlistMachine = setup({
+  types: {
+    context: {} as PlaylistContext,
+    events: {} as PlaylistEvent,
+  },
+}).createMachine({
   id: 'playlist',
   initial: 'active',
   context: () => {
@@ -63,23 +68,25 @@ const playlistMachine = createMachine<PlaylistContext, PlaylistEvent>({
     active: {
       on: {
         ADD_TRACK: {
-          actions: assign({
-            tracks: ({ context, event }) => {
-              if (!context.tracks.some((t) => t.id === event.track.id)) {
-                const newTracks = [...context.tracks, event.track];
-                if (context.shuffle) {
-                  // If shuffle is on, add to shuffled list as well
-                  // and re-shuffle
-                  return {
-                    ...context,
-                    tracks: newTracks,
-                    shuffledTracks: shuffleArray(newTracks),
-                  };
-                }
-                return newTracks;
+          actions: assign(({ context, event }) => {
+            if (!context.tracks.some((t) => t.id === event.track.id)) {
+              const newTracks = [...context.tracks, event.track];
+              if (context.shuffle) {
+                // If shuffle is on, add to shuffled list as well
+                // and re-shuffle
+                return {
+                  ...context,
+                  tracks: newTracks,
+                  shuffledTracks: shuffleArray(newTracks),
+                };
               }
-              return context.tracks;
-            },
+              return {
+                ...context,
+                tracks: newTracks,
+                shuffledTracks: shuffleArray(newTracks),
+              };
+            }
+            return context;
           }),
         },
         REMOVE_TRACK: {
