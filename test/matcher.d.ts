@@ -3,6 +3,7 @@ import 'bun:test';
 
 declare module 'bun:test' {
   interface Matchers<T>
-    extends TestingLibraryMatchers<typeof expect.stringContaining, T> { }
-  interface AsymmetricMatchers extends TestingLibraryMatchers<any, any> { }
+    extends TestingLibraryMatchers<typeof expect.stringContaining, T> {}
+  interface AsymmetricMatchers
+    extends TestingLibraryMatchers<unknown, unknown> {}
 }

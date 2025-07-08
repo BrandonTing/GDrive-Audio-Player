@@ -1,6 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-test('should navigate into a folder and display its contents', async ({ page }) => {
+test('should navigate into a folder and display its contents', async ({
+  page,
+}) => {
   // Mock Google Drive API responses
   await page.route('**/files?q=*', async (route) => {
     const url = new URL(route.request().url());

@@ -21,8 +21,7 @@ export const fetchFolderContents = async (
     });
     return response.data.files;
   } catch (error) {
-    console.error(
-      `Error fetching contents for folder ${parentId || 'root'}`    );
+    console.error(`Error fetching contents for folder ${parentId || 'root'}`);
     throw error;
   }
 };

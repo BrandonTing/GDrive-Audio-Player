@@ -1,8 +1,8 @@
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import Login from './Login';
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'; // Import afterEach
 import { useGoogleLogin } from '@react-oauth/google';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { notifyAuthStoreChange } from '../hooks/useAuthStore';
-import { mock, describe, it, expect, beforeEach, afterEach } from 'bun:test'; // Import afterEach
+import Login from './Login';
 
 // Mock @react-oauth/google
 mock.module('@react-oauth/google', () => ({
@@ -17,7 +17,6 @@ const localStorageMock = {
   clear: mock(), // Use mock() instead of mock.fn()
 };
 
-
 // Mock notifyAuthStoreChange
 mock.module('../hooks/useAuthStore', () => ({
   notifyAuthStoreChange: mock(), // Use mock() instead of mock.fn()
@@ -26,8 +25,8 @@ mock.module('../hooks/useAuthStore', () => ({
 describe('Login', () => {
   const mockLoginFn = mock(); // Use mock() instead of mock.fn()
   const mockOnLoginSuccess = mock(); // Use mock() instead of mock.fn()
-  let mockOnSuccessCallback: (tokenResponse: any) => void;
-  let mockOnErrorCallback: (errorResponse: any) => void;
+  let mockOnSuccessCallback: (tokenResponse: unknown) => void;
+  let mockOnErrorCallback: (errorResponse: unknown) => void;
   let originalLocalStorage: Storage;
   beforeEach(() => {
     originalLocalStorage = window.localStorage;
@@ -35,7 +34,7 @@ describe('Login', () => {
     Object.defineProperty(window, 'localStorage', {
       value: localStorageMock,
     });
-    
+
     localStorageMock.setItem.mockClear(); // Clear calls for localStorage.setItem
     localStorageMock.getItem.mockClear(); // Clear calls for localStorage.getItem
     localStorageMock.removeItem.mockClear(); // Clear calls for localStorage.removeItem
@@ -43,17 +42,22 @@ describe('Login', () => {
     (notifyAuthStoreChange as ReturnType<typeof mock>).mockClear(); // Clear calls for notifyAuthStoreChange
     mockOnLoginSuccess.mockClear(); // Clear calls for mockOnLoginSuccess
     // Reset the mock for useGoogleLogin to capture the callbacks
-    (useGoogleLogin as ReturnType<typeof mock>).mockImplementation((options: any) => {
-      mockOnSuccessCallback = options.onSuccess;
-      mockOnErrorCallback = options.onError;
-      return mockLoginFn;
-    });
+    (useGoogleLogin as ReturnType<typeof mock>).mockImplementation(
+      (options: {
+        onSuccess: (tokenResponse: unknown) => void;
+        onError: (errorResponse: unknown) => void;
+      }) => {
+        mockOnSuccessCallback = options.onSuccess;
+        mockOnErrorCallback = options.onError;
+        return mockLoginFn;
+      },
+    );
   });
 
   afterEach(() => {
     Object.defineProperty(window, 'localStorage', {
       value: originalLocalStorage,
-      writable: true
+      writable: true,
     });
 
     cleanup(); // Clean up the DOM after each test
@@ -61,30 +65,44 @@ describe('Login', () => {
 
   it('renders the Sign in with Google button', () => {
     render(<Login onLoginSuccess={mockOnLoginSuccess} />);
-    expect(screen.getByRole('button', { name: /sign in with google/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /sign in with google/i }),
+    ).toBeInTheDocument();
   });
 
   it('calls the login function on button click', () => {
     render(<Login onLoginSuccess={mockOnLoginSuccess} />);
-    fireEvent.click(screen.getByRole('button', { name: /sign in with google/i }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /sign in with google/i }),
+    );
     expect(mockLoginFn).toHaveBeenCalledTimes(1);
   });
 
   it('handles successful login', () => {
     render(<Login onLoginSuccess={mockOnLoginSuccess} />);
-    fireEvent.click(screen.getByRole('button', { name: /sign in with google/i }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /sign in with google/i }),
+    );
 
-    const mockTokenResponse = { access_token: 'mock_access_token', expires_in: 3600 };
+    const mockTokenResponse = {
+      access_token: 'mock_access_token',
+      expires_in: 3600,
+    };
     mockOnSuccessCallback(mockTokenResponse);
 
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('google_access_token', 'mock_access_token');
+    expect(localStorageMock.setItem).toHaveBeenCalledWith(
+      'google_access_token',
+      'mock_access_token',
+    );
     expect(notifyAuthStoreChange).toHaveBeenCalledTimes(1);
     expect(mockOnLoginSuccess).toHaveBeenCalledTimes(1);
   });
 
   it('handles failed login', () => {
     render(<Login onLoginSuccess={mockOnLoginSuccess} />);
-    fireEvent.click(screen.getByRole('button', { name: /sign in with google/i }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /sign in with google/i }),
+    );
 
     const mockErrorResponse = { error: 'login_failed' };
     mockOnErrorCallback(mockErrorResponse);

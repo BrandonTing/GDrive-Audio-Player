@@ -9,9 +9,11 @@ export default defineConfig({
   },
   output: {
     assetPrefix: '/GDrive-Audio-Player/',
-    copy: [{
-      from: './404.html',
-      to: '404.html',
-    }],
+    copy: [
+      {
+        from: './404.html',
+        to: '404.html',
+      },
+    ],
   },
 });

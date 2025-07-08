@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'bun:test';
 import { HttpResponse, http } from 'msw';
+import type { LoaderFunctionArgs } from 'react-router-dom';
 import { server } from '../../test/msw-setup';
 import { homePageLoader } from './HomePage.loader';
 
@@ -16,13 +17,15 @@ describe('homePageLoader', () => {
       }),
     );
 
-    const response = await homePageLoader({ params: {} } as any);
-    const data = await (response as {
-      files: {
-        id: string;
-        name: string;
-      }[];
-    }).files;
+    const response = await homePageLoader({ params: {} } as LoaderFunctionArgs);
+    const data = await (
+      response as {
+        files: {
+          id: string;
+          name: string;
+        }[];
+      }
+    ).files;
 
     expect(data).toEqual(mockFiles);
   });
@@ -34,7 +37,7 @@ describe('homePageLoader', () => {
       }),
     );
 
-    const response = await homePageLoader({ params: {} } as any);
+    const response = await homePageLoader({ params: {} } as LoaderFunctionArgs);
 
     expect(response instanceof Response).toBe(true);
     if (response instanceof Response) {

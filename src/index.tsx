@@ -9,36 +9,39 @@ import HomePage from './pages/HomePage';
 import { homePageLoader } from './pages/HomePage.loader'; // Import the homePageLoader
 import LoginPage from './pages/LoginPage';
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <RootLayout />,
+      children: [
+        {
+          loader: protectedLoader,
+          children: [
+            {
+              index: true,
+              element: <HomePage />,
+              loader: homePageLoader, // Use the combined loader
+            },
+            {
+              path: 'folder/:folderId',
+              element: <HomePage />,
+              loader: homePageLoader, // Use the combined loader for nested folders
+            },
+          ],
+        },
+        {
+          path: 'login',
+          element: <LoginPage />,
+          loader: loginRedirectLoader, // Apply loginRedirectLoader to the login route
+        },
+      ],
+    },
+  ],
   {
-    path: '/',
-    element: <RootLayout />,
-    children: [
-      {
-        loader: protectedLoader,
-        children: [
-          {
-            index: true,
-            element: <HomePage />,
-            loader: homePageLoader, // Use the combined loader
-          },
-          {
-            path: 'folder/:folderId',
-            element: <HomePage />,
-            loader: homePageLoader, // Use the combined loader for nested folders
-          },
-        ],
-      },
-      {
-        path: 'login',
-        element: <LoginPage />,
-        loader: loginRedirectLoader, // Apply loginRedirectLoader to the login route
-      },
-    ],
+    basename: '/GDrive-Audio-Player',
   },
-], {
-  basename: '/GDrive-Audio-Player',
-});
+);
 
 const rootEl = document.getElementById('root');
 if (rootEl) {

@@ -1,7 +1,7 @@
-import { fetchFolderContents, getAudioFileBlobUrl } from './googleDriveService';
-import { http, HttpResponse } from 'msw';
+import { describe, expect, it } from 'bun:test';
+import { HttpResponse, http } from 'msw';
 import { server } from '../../test/msw-setup';
-import { describe, it, expect, beforeAll, afterEach, afterAll } from 'bun:test';
+import { fetchFolderContents, getAudioFileBlobUrl } from './googleDriveService';
 
 describe('googleDriveService', () => {
   // MSW server setup is handled in test/test-setup.ts
@@ -10,7 +10,11 @@ describe('googleDriveService', () => {
     it('fetches root folder contents successfully', async () => {
       const files = await fetchFolderContents(null);
       expect(files).toEqual([
-        { id: 'folder-1', name: 'My Music', mimeType: 'application/vnd.google-apps.folder' },
+        {
+          id: 'folder-1',
+          name: 'My Music',
+          mimeType: 'application/vnd.google-apps.folder',
+        },
         { id: 'audio-1', name: 'Song A.mp3', mimeType: 'audio/mpeg' },
       ]);
     });
@@ -45,7 +49,10 @@ describe('googleDriveService', () => {
           const url = new URL(request.url);
           const q = url.searchParams.get('q');
           if (q?.includes("'error-folder' in parents")) {
-            return new HttpResponse(null, { status: 500, statusText: 'Internal Server Error' });
+            return new HttpResponse(null, {
+              status: 500,
+              statusText: 'Internal Server Error',
+            });
           }
           return HttpResponse.error(); // Fallback to error if not the specific query
         }),
