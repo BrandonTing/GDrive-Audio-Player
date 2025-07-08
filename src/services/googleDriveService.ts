@@ -22,9 +22,7 @@ export const fetchFolderContents = async (
     return response.data.files;
   } catch (error) {
     console.error(
-      `Error fetching contents for folder ${parentId || 'root'}:`,
-      error,
-    );
+      `Error fetching contents for folder ${parentId || 'root'}`    );
     throw error;
   }
 };
@@ -42,7 +40,7 @@ export const getAudioFileBlobUrl = async (fileId: string): Promise<string> => {
     const blob = new Blob([response.data], { type: contentType });
     return URL.createObjectURL(blob);
   } catch (error) {
-    console.error('Error fetching audio file as blob:', error);
+    console.error('Error fetching audio file as blob:');
     throw error;
   }
 };

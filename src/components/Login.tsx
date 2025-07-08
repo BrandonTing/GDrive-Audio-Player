@@ -8,7 +8,6 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-      console.log('Login Success:', tokenResponse);
       localStorage.setItem('google_access_token', tokenResponse.access_token);
       notifyAuthStoreChange(); // Notify the store of the change
       onLoginSuccess();
