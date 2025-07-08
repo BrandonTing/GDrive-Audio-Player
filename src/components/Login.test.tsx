@@ -16,9 +16,7 @@ const localStorageMock = {
   removeItem: mock(), // Use mock() instead of mock.fn()
   clear: mock(), // Use mock() instead of mock.fn()
 };
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+
 
 // Mock notifyAuthStoreChange
 mock.module('../hooks/useAuthStore', () => ({
@@ -30,9 +28,14 @@ describe('Login', () => {
   const mockOnLoginSuccess = mock(); // Use mock() instead of mock.fn()
   let mockOnSuccessCallback: (tokenResponse: any) => void;
   let mockOnErrorCallback: (errorResponse: any) => void;
-
+  let originalLocalStorage: Storage;
   beforeEach(() => {
+    originalLocalStorage = window.localStorage;
     mock.restore();
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+    });
+    
     localStorageMock.setItem.mockClear(); // Clear calls for localStorage.setItem
     localStorageMock.getItem.mockClear(); // Clear calls for localStorage.getItem
     localStorageMock.removeItem.mockClear(); // Clear calls for localStorage.removeItem
@@ -48,6 +51,11 @@ describe('Login', () => {
   });
 
   afterEach(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: originalLocalStorage,
+      writable: true
+    });
+
     cleanup(); // Clean up the DOM after each test
   });
 

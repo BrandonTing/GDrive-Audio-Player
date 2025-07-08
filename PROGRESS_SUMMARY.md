@@ -31,3 +31,27 @@ This document summarizes the current state of the GDrive Audio Player project.
 ## Phase 4: Future Enhancements (In Progress)
 
 - **Persistence:** Persist the user's playlist and current track to `localStorage` to allow for session resumption.
+
+## Phase 5: Testing & Deployment Enhancements (In Progress)
+
+- **Overall Goal:** Develop a GDrive Audio Player application, focusing on robust authentication, improved error handling, and comprehensive testing.
+- **Key Knowledge:**
+    - The application is a React project using Bun as the package manager.
+    - It interacts with the Google Drive API for audio file management.
+    - Client-side authentication is handled by `@react-oauth/google`.
+    - Deployment is configured for GitHub Pages.
+    - Unit testing is set up using Bun's built-in test runner, React Testing Library, and MSW for network mocking.
+    - Error handling for 401 responses is implemented in Axios interceptors and React Router loaders, leading to user logout and redirection.
+    - Bun's native mocking (`mock()`) is used for unit tests.
+    - DOM environment for tests is provided by `@happy-dom/global-registrator` and configured in `bunfig.toml`.
+- **Recent Actions:**
+    - Successfully implemented GitHub Pages deployment and resolved 404 issues for sub-routes.
+    - Established a robust unit testing environment using Bun's test runner, React Testing Library, and MSW.
+    - Successfully wrote and passed unit tests for `LoadingSpinner.tsx`, `Login.tsx`, and `googleDriveService.ts`.
+    - Resolved multiple configuration and compatibility issues related to Bun's test runner, TypeScript, and mocking libraries.
+    - Refined error logging in `googleDriveService.ts`.
+- **Current Plan:**
+    1. [TODO] Add unit tests for `axiosInstance.ts` (interceptors).
+    2. [TODO] Add unit tests for `HomePage.loader.ts`.
+    3. [TODO] Set up End-to-End (E2E) testing using Playwright.
+    4. [TODO] Integrate testing into CI/CD pipeline.

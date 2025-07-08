@@ -8,7 +8,7 @@ export async function homePageLoader({ params }: LoaderFunctionArgs) {
     const files = await fetchFolderContents(folderId || null);
     return { files };
   } catch (error) {
-    console.error('Error in HomePage loader:', error);
+    console.error('Error in HomePage loader');
     // Clear the access token and redirect to login
     localStorage.removeItem('google_access_token');
     return redirect('/login');
