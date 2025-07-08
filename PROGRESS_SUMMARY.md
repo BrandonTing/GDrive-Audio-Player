@@ -28,11 +28,7 @@ This document summarizes the current state of the GDrive Audio Player project.
     - [x] **Modern Layout & Styling:** Implemented a modern two-column layout with a fixed audio player using Tailwind CSS. Applied Tailwind classes to `HomePage.tsx`, `AudioPlayer.tsx`, and `Playlist.tsx` for improved visual design and responsiveness.
     - [x] **UI/UX Polish:** Improved the overall visual design and layout for a more modern and responsive user experience.
 
-## Phase 4: Future Enhancements (In Progress)
-
-- **Persistence:** Persist the user's playlist and current track to `localStorage` to allow for session resumption.
-
-## Phase 5: Testing & Deployment Enhancements (In Progress)
+## Phase 4: Testing & Deployment Enhancements (In Progress)
 
 - **Overall Goal:** Develop a GDrive Audio Player application, focusing on robust authentication, improved error handling, and comprehensive testing.
 - **Key Knowledge:**
@@ -51,7 +47,6 @@ This document summarizes the current state of the GDrive Audio Player project.
     - Resolved multiple configuration and compatibility issues related to Bun's test runner, TypeScript, and mocking libraries.
     - Refined error logging in `googleDriveService.ts`.
 - **Current Plan:**
-    1. [TODO] Add unit tests for `axiosInstance.ts` (interceptors).
-    2. [TODO] Add unit tests for `HomePage.loader.ts`.
-    3. [TODO] Set up End-to-End (E2E) testing using Playwright.
-    4. [TODO] Integrate testing into CI/CD pipeline.
+        1. [x] Add unit tests for `axiosInstance.ts` (interceptors).
+    2. [x] Add unit tests for `HomePage.loader.ts`.
+    3. [x] Set up End-to-End (E2E) testing using Playwright.
