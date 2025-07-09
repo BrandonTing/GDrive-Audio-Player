@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './e2e',
   webServer: {
-    command: 'bun dev',
+    command: 'PUBLIC_GOOGLE_CLIENT_ID=1234567890 bun dev',
     url: 'http://localhost:3000/GDrive-Audio-Player',
     reuseExistingServer: !process.env.CI,
   },
