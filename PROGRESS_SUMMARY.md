@@ -50,3 +50,4 @@ This document summarizes the current state of the GDrive Audio Player project.
         1. [x] Add unit tests for `axiosInstance.ts` (interceptors).
     2. [x] Add unit tests for `HomePage.loader.ts`.
     3. [x] Set up End-to-End (E2E) testing using Playwright.
+    4. [x] Integrate testing into CI/CD pipeline.
