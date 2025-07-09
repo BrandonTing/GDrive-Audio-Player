@@ -4,7 +4,7 @@ import {
   useAudioPlayerActor,
   useAudioPlayerSelector,
 } from '../context/AudioPlayerActorContext';
-import { usePlaylist } from '../context/PlaylistContext';
+import { usePlaylistActor, usePlaylistSelector } from '../context/PlaylistContext';
 
 const formatTime = (timeInSeconds: number): string => {
   const minutes = Math.floor(timeInSeconds / 60);
@@ -19,7 +19,9 @@ const AudioPlayer: React.FC = () => {
   const actorRef = useAudioPlayerActor();
   const state = useAudioPlayerSelector((state) => state);
   const send = actorRef.send;
-  const { playlistState, sendToPlaylist } = usePlaylist();
+  const playlistActorRef = usePlaylistActor();
+  const playlistState = usePlaylistSelector((state) => state);
+  const sendToPlaylist = playlistActorRef.send;
 
   const src =
     playlistState.context.currentTrackIndex !== null &&

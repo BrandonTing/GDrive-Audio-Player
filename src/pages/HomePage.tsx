@@ -3,7 +3,7 @@ import { useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import AudioPlayer from '../components/AudioPlayer';
 import Playlist from '../components/Playlist';
 import { AudioPlayerActorProvider } from '../context/AudioPlayerActorContext';
-import { usePlaylist } from '../context/PlaylistContext';
+import { usePlaylistActor } from '../context/PlaylistContext';
 import type { GoogleDriveFile } from '../services/googleDriveService';
 
 interface HomePageLoaderData {
@@ -15,7 +15,8 @@ const HomePage = () => {
   const { folderId } = useParams<{ folderId?: string }>();
   const navigate = useNavigate();
 
-  const { sendToPlaylist } = usePlaylist();
+  const playlistActorRef = usePlaylistActor();
+  const sendToPlaylist = playlistActorRef.send;
 
   const folders = files.filter(
     (file) => file.mimeType === 'application/vnd.google-apps.folder',

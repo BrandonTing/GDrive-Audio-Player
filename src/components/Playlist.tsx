@@ -1,9 +1,11 @@
 import type React from 'react';
 import { useAudioPlayerActor } from '../context/AudioPlayerActorContext'; // Import useAudioPlayerActor
-import { usePlaylist } from '../context/PlaylistContext';
+import { usePlaylistActor, usePlaylistSelector } from '../context/PlaylistContext';
 
 const Playlist: React.FC = () => {
-  const { playlistState, sendToPlaylist } = usePlaylist();
+  const playlistActorRef = usePlaylistActor();
+  const playlistState = usePlaylistSelector((state) => state);
+  const sendToPlaylist = playlistActorRef.send;
   const actorRef = useAudioPlayerActor();
   const audioPlayerState = actorRef.getSnapshot();
   const sendToAudioPlayer = actorRef.send;
