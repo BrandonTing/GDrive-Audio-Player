@@ -39,7 +39,7 @@ jobs:
         if: failure() # 只在測試失敗時上傳
         with:
           name: playwright-traces
-          path: playwright-report/**/trace.zip
+          path: test-results/**/trace.zip
 
       - name: Upload Playwright Test Results
         uses: actions/upload-artifact@v4
