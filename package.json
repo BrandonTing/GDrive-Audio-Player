@@ -13,7 +13,7 @@
     "format": "biome format --write",
     "preview": "rsbuild preview",
     "test:unit": "NODE_ENV=test bun test",
-    "test:e2e": "playwright test --trace on"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.2",

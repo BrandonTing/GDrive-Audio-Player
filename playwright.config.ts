@@ -15,5 +15,14 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
     // 設置合適的 viewport
     viewport: { width: 1280, height: 720 },
+    trace: 'retain-on-failure',
   },
+  projects: [
+    {
+      name: 'Chromium',
+      use: {
+        browserName: 'chromium',
+      },
+    }
+  ]
 });
