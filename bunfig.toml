@@ -1,3 +1,4 @@
 [test]
 preload = ["./test/test-setup.ts"]
 testEnvironment = "jsdom"
+root = "src" 
