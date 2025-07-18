@@ -40,7 +40,6 @@ describe('axiosInstance interceptors', () => {
     );
 
     await axiosInstance.get('/files');
-
     expect(requestHeaders?.get('Authorization')).toBeNull();
   });
 });

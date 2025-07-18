@@ -1,6 +1,9 @@
 import type React from 'react';
 import { useAudioPlayerActor } from '../context/AudioPlayerActorContext'; // Import useAudioPlayerActor
-import { usePlaylistActor, usePlaylistSelector } from '../context/PlaylistContext';
+import {
+  usePlaylistActor,
+  usePlaylistSelector,
+} from '../context/PlaylistContext';
 
 const Playlist: React.FC = () => {
   const playlistActorRef = usePlaylistActor();

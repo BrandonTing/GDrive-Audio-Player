@@ -4,7 +4,10 @@ import {
   useAudioPlayerActor,
   useAudioPlayerSelector,
 } from '../context/AudioPlayerActorContext';
-import { usePlaylistActor, usePlaylistSelector } from '../context/PlaylistContext';
+import {
+  usePlaylistActor,
+  usePlaylistSelector,
+} from '../context/PlaylistContext';
 
 const formatTime = (timeInSeconds: number): string => {
   const minutes = Math.floor(timeInSeconds / 60);
