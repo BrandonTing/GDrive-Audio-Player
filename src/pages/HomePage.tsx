@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import AudioPlayer from '../components/AudioPlayer';
@@ -43,14 +44,25 @@ const HomePage = () => {
     toast.success(`${file.name} added to playlist!`);
   };
 
+  const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
+
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
         {/* File Browser Section */}
         <div className="flex-1 p-5 overflow-y-auto">
-          <h1 className="text-3xl font-bold mb-4">
-            {folderId ? 'Folder Contents' : 'Your Google Drive Files'}
-          </h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl font-bold">
+              {folderId ? 'Folder Contents' : 'Your Google Drive Files'}
+            </h1>
+            <button
+              type="button"
+              onClick={() => setIsPlaylistOpen(true)}
+              className="md:hidden px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+            >
+              Playlist
+            </button>
+          </div>
 
           {folderId && (
             <button
@@ -114,12 +126,30 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* Playlist Section */}
-        <div className="w-80 p-5 border-l border-gray-700 overflow-y-auto bg-gray-800">
+        {/* Playlist Section (Desktop) */}
+        <div className="hidden md:block w-80 p-5 border-l border-gray-700 overflow-y-auto bg-gray-800">
           <AudioPlayerActorProvider>
             <Playlist />
           </AudioPlayerActorProvider>
         </div>
+
+        {/* Playlist Section (Mobile Modal) */}
+        {isPlaylistOpen && (
+          <div className="md:hidden fixed inset-0 bg-gray-900 bg-opacity-75 z-50">
+            <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-gray-800 p-5 overflow-y-auto">
+              <button
+                type="button"
+                onClick={() => setIsPlaylistOpen(false)}
+                className="mb-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+              >
+                Close
+              </button>
+              <AudioPlayerActorProvider>
+                <Playlist />
+              </AudioPlayerActorProvider>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Audio Player Section (Fixed at bottom) */}
