@@ -51,9 +51,9 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
+      <div className="flex overflow-hidden flex-col flex-1 md:flex-row">
         {/* File Browser Section */}
-        <div className="flex-1 p-5 overflow-y-auto">
+        <div className="overflow-y-auto flex-1 p-5">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-3xl font-bold">
               {folderId ? 'Folder Contents' : 'Your Google Drive Files'}
@@ -61,23 +61,23 @@ const HomePage = () => {
             <button
               type="button"
               onClick={() => setIsPlaylistOpen(true)}
-              className="md:hidden px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+              className="px-4 py-2 text-white bg-gray-700 rounded-md md:hidden hover:bg-gray-600"
             >
               Playlist
             </button>
           </div>
 
-          {folderId && (
+          {parentId && (
             <button
               type="button"
               onClick={handleBackClick}
-              className="mb-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+              className="px-4 py-2 mb-4 text-white bg-gray-700 rounded-md hover:bg-gray-600"
             >
               Back to Parent Folder
             </button>
           )}
 
-          <h2 className="text-2xl font-semibold mb-3">Folders</h2>
+          <h2 className="mb-3 text-2xl font-semibold">Folders</h2>
           {folders.length === 0 ? (
             <p className="text-gray-400">No subfolders found.</p>
           ) : (
@@ -87,7 +87,7 @@ const HomePage = () => {
                   <button
                     type="button"
                     onClick={() => handleFolderClick(folder)}
-                    className="text-blue-400 hover:text-blue-300 text-lg"
+                    className="text-lg text-blue-400 hover:text-blue-300"
                   >
                     📁 {folder.name}
                   </button>
@@ -96,7 +96,7 @@ const HomePage = () => {
             </ul>
           )}
 
-          <h2 className="text-2xl font-semibold mt-6 mb-3">Audio Files</h2>
+          <h2 className="mt-6 mb-3 text-2xl font-semibold">Audio Files</h2>
           {audioFiles.length === 0 ? (
             <p className="text-gray-400">
               No audio files found in this folder.
@@ -108,19 +108,19 @@ const HomePage = () => {
                   <button
                     type="button"
                     onClick={() => handleFileClick(file)}
-                    className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-md text-white text-sm"
+                    className="px-3 py-1 text-sm text-white bg-gray-700 rounded-md hover:bg-gray-600"
                   >
                     ▶️ Play
                   </button>
                   <button
                     type="button"
                     onClick={() => handleAddToPlaylist(file)}
-                    className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-md text-white text-sm"
+                    className="px-3 py-1 text-sm text-white bg-gray-700 rounded-md hover:bg-gray-600"
                   >
                     ➕ Add to Playlist
                   </button>
                   <span className="text-lg">{file.name}</span>
-                  <span className="text-gray-500 text-sm">
+                  <span className="text-sm text-gray-500">
                     ({file.mimeType})
                   </span>
                 </li>
@@ -130,7 +130,7 @@ const HomePage = () => {
         </div>
 
         {/* Playlist Section (Desktop) */}
-        <div className="hidden md:block w-80 p-5 border-l border-gray-700 overflow-y-auto bg-gray-800">
+        <div className="hidden overflow-y-auto p-5 w-80 bg-gray-800 border-l border-gray-700 md:block">
           <AudioPlayerActorProvider>
             <Playlist />
           </AudioPlayerActorProvider>
@@ -138,12 +138,12 @@ const HomePage = () => {
 
         {/* Playlist Section (Mobile Modal) */}
         {isPlaylistOpen && (
-          <div className="md:hidden fixed inset-0 bg-gray-900 bg-opacity-75 z-50">
-            <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-gray-800 p-5 overflow-y-auto">
+          <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-75 md:hidden">
+            <div className="overflow-y-auto fixed inset-y-0 right-0 p-5 w-full max-w-sm bg-gray-800">
               <button
                 type="button"
                 onClick={() => setIsPlaylistOpen(false)}
-                className="mb-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+                className="px-4 py-2 mb-4 text-white bg-gray-700 rounded-md hover:bg-gray-600"
               >
                 Close
               </button>
@@ -156,7 +156,7 @@ const HomePage = () => {
       </div>
 
       {/* Audio Player Section (Fixed at bottom) */}
-      <div className="border-t border-gray-700 bg-gray-900 p-4">
+      <div className="p-4 bg-gray-900 border-t border-gray-700">
         <AudioPlayerActorProvider>
           <AudioPlayer />
         </AudioPlayerActorProvider>

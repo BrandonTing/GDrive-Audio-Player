@@ -8,13 +8,11 @@ import {
 export async function homePageLoader({ params }: LoaderFunctionArgs) {
   const folderId = params.folderId as string | undefined;
   try {
-    const files = await fetchFolderContents(folderId || null);
-    if (folderId) {
-      const folderDetails = await fetchFolderDetails(folderId);
-      const parentId = folderDetails.parents ? folderDetails.parents[0] : null;
-      return { files, parentId };
-    }
-    return { files, parentId: null };
+    const [files, folderDetails] = await Promise.all([
+      fetchFolderContents(folderId || null),
+      folderId ? fetchFolderDetails(folderId) : null,
+    ]);
+    return { files, parentId: folderDetails?.parents?.[0] || null };
   } catch (_error) {
     console.error('Error in HomePage loader');
     // Clear the access token and redirect to login
