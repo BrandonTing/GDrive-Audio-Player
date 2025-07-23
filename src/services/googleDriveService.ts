@@ -43,3 +43,19 @@ export const getAudioFileBlobUrl = async (fileId: string): Promise<string> => {
     throw error;
   }
 };
+
+export const fetchFolderDetails = async (
+  folderId: string,
+): Promise<{ id: string; name: string; parents: string[] }> => {
+  try {
+    const response = await axiosInstance.get(`/files/${folderId}`, {
+      params: {
+        fields: 'id,name,parents',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching details for folder ${folderId}`);
+    throw error;
+  }
+};

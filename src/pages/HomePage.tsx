@@ -9,10 +9,11 @@ import type { GoogleDriveFile } from '../services/googleDriveService';
 
 interface HomePageLoaderData {
   files: GoogleDriveFile[];
+  parentId: string | null;
 }
 
 const HomePage = () => {
-  const { files } = useLoaderData() as HomePageLoaderData;
+  const { files, parentId } = useLoaderData() as HomePageLoaderData;
   const { folderId } = useParams<{ folderId?: string }>();
   const navigate = useNavigate();
 
@@ -34,7 +35,9 @@ const HomePage = () => {
   };
 
   const handleBackClick = () => {
-    if (folderId) {
+    if (parentId) {
+      navigate(`/folder/${parentId}`);
+    } else {
       navigate('/');
     }
   };
