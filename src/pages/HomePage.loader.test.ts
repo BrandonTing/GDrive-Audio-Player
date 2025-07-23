@@ -18,7 +18,7 @@ describe('homePageLoader', () => {
     );
 
     const response = await homePageLoader({ params: {} } as LoaderFunctionArgs);
-    const data = await (
+    const data = (
       response as {
         files: {
           id: string;
@@ -26,7 +26,6 @@ describe('homePageLoader', () => {
         }[];
       }
     ).files;
-
     expect(data).toEqual(mockFiles);
   });
 
