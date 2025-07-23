@@ -82,7 +82,10 @@ const AudioPlayer: React.FC = () => {
         ref={setupAudioRef}
         src={state.context.blobUrl || undefined}
         preload="auto"
-        onEnded={() => send({ type: 'ENDED' })}
+        onEnded={() => {
+          send({ type: 'ENDED' });
+          sendToPlaylist({ type: 'PLAY_NEXT' });
+        }}
         onError={() => send({ type: 'ERROR', message: 'Failed to play' })}
         onTimeUpdate={() =>
           send({
