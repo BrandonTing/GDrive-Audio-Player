@@ -107,6 +107,7 @@ const AudioPlayer: React.FC = () => {
           <p className="font-semibold truncate">{currentTrackName}</p>
           <p className="text-sm text-gray-400">Status: {String(state.value)}</p>
         </div>
+        <p className="hidden text-sm text-gray-400 md:block">Status: {String(state.value)}</p>
 
         <div className="mb-2 w-full">
           <input

@@ -48,7 +48,8 @@ test('should successfully log in and display home page content', async ({
   await expect(page.locator('h2:has-text("Playlist")')).toBeVisible();
 
   // 檢查是否顯示了音頻播放器的狀態
-  await expect(page.locator('text=Status:')).toBeVisible();
+  const status = page.locator('text=Status:').filter({ visible: true });
+  await expect(status).toBeVisible();
 
   // 檢查是否顯示了文件夾和音頻文件的分組標題
   await expect(page.locator('h2:has-text("Folders")')).toBeVisible();
