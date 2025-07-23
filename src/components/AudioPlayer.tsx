@@ -83,8 +83,12 @@ const AudioPlayer: React.FC = () => {
         src={state.context.blobUrl || undefined}
         preload="auto"
         onEnded={() => {
-          send({ type: 'ENDED' });
-          sendToPlaylist({ type: 'PLAY_NEXT' });
+          if (playlistState.context.repeat === 'one') {
+            send({ type: 'REPLAY' });
+          } else {
+            send({ type: 'ENDED' });
+            sendToPlaylist({ type: 'PLAY_NEXT' });
+          }
         }}
         onError={() => send({ type: 'ERROR', message: 'Failed to play' })}
         onTimeUpdate={() =>

@@ -60,6 +60,10 @@ export const audioPlayerMachine = createMachine(
           SEEK: {
             actions: 'seek',
           },
+          REPLAY: {
+            target: 'playing',
+            actions: 'seekToStart',
+          },
         },
       },
       paused: {
@@ -148,6 +152,11 @@ export const audioPlayerMachine = createMachine(
       seek: ({ context, event }) => {
         if (event.type === 'SEEK' && context.audioRef) {
           context.audioRef.currentTime = event.time;
+        }
+      },
+      seekToStart: ({ context }) => {
+        if (context.audioRef) {
+          context.audioRef.currentTime = 0;
         }
       },
     },
