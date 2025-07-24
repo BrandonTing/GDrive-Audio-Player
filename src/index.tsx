@@ -1,3 +1,5 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -8,6 +10,9 @@ import { protectedLoader } from './loaders/protectedLoader';
 import HomePage from './pages/HomePage';
 import { homePageLoader } from './pages/HomePage.loader'; // Import the homePageLoader
 import LoginPage from './pages/LoginPage';
+
+// 1. Create a client
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter(
   [
@@ -21,12 +26,12 @@ const router = createBrowserRouter(
             {
               index: true,
               element: <HomePage />,
-              loader: homePageLoader, // Use the combined loader
+              loader: homePageLoader(queryClient), // Use the loader factory
             },
             {
               path: 'folder/:folderId',
               element: <HomePage />,
-              loader: homePageLoader, // Use the combined loader for nested folders
+              loader: homePageLoader(queryClient), // Use the loader factory
             },
           ],
         },
@@ -48,7 +53,12 @@ if (rootEl) {
   const root = ReactDOM.createRoot(rootEl);
   root.render(
     <React.StrictMode>
-      <RouterProvider router={router} />
+      {/* 2. Provide the client to your App */}
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        {/* 3. Add the devtools (will only show in development) */}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </React.StrictMode>,
   );
 }

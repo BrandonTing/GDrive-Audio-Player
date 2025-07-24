@@ -3,6 +3,7 @@ import { HttpResponse, http } from 'msw';
 import type { LoaderFunctionArgs } from 'react-router-dom';
 import { server } from '../../test/msw-setup';
 import { homePageLoader } from './HomePage.loader';
+import { QueryClient } from '@tanstack/react-query';
 
 describe('homePageLoader', () => {
   afterEach(() => {
@@ -16,8 +17,8 @@ describe('homePageLoader', () => {
         return HttpResponse.json({ files: mockFiles });
       }),
     );
-
-    const response = await homePageLoader({ params: {} } as LoaderFunctionArgs);
+    const queryClient = new QueryClient();
+    const response = await homePageLoader(queryClient)({ params: {} } as LoaderFunctionArgs);
     const data = (
       response as {
         files: {
@@ -36,7 +37,8 @@ describe('homePageLoader', () => {
       }),
     );
 
-    const response = await homePageLoader({ params: {} } as LoaderFunctionArgs);
+    const queryClient = new QueryClient();
+    const response = await homePageLoader(queryClient)({ params: {} } as LoaderFunctionArgs);
 
     expect(response instanceof Response).toBe(true);
     if (response instanceof Response) {
