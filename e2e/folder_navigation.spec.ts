@@ -7,7 +7,6 @@ test('should navigate into a folder and display its contents', async ({
   await page.route('**/files?q=*', async (route) => {
     const url = new URL(route.request().url());
     const qParam = url.searchParams.get('q');
-
     if (qParam?.includes("'root' in parents")) {
       // Mock response for root folder
       await route.fulfill({
@@ -52,7 +51,24 @@ test('should navigate into a folder and display its contents', async ({
       await route.continue();
     }
   });
-
+  // Mock response for folder details
+  await page.route('**/files/*', async (route) => {
+    const url = new URL(route.request().url());
+    const fileId = url.pathname.split('/').pop();
+    if (fileId === 'folder1') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'folder1',
+          name: 'My Music Folder',
+          parents: ['root'],
+        }),
+      });
+    } else {
+      await route.continue();
+    }
+  });
   // Simulate a logged-in state
   await page.context().addInitScript(() => {
     localStorage.setItem('google_access_token', 'dummy_access_token');

@@ -21,5 +21,5 @@ test('should navigate to the login page when user is not logged in', async ({
 }) => {
   await page.goto('/');
   await expect(page.locator('h1')).toContainText('GDrive Audio Player');
-  await expect(page.locator('button')).toContainText('Sign in with Google');
+  await expect(page.locator('button', { hasText: 'Sign in with Google' })).toBeVisible();
 });
